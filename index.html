@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Windows Server 2022 - GUI Handleiding/Oefening</title>
+    <title>Windows Server 2022 - Handleiding/Oefening</title>
     <style>
         * {
             margin: 0;
@@ -258,7 +257,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🖥️ Windows Server 2022 - Complete Handleiding</h1>
+            <h1>🖥️ Windows Server 2022 - Handleiding/Oefening</h1>
             <p>Uitgebreide gids voor het beheren van Windows Server 2022</p>
         </div>
 
@@ -284,39 +283,76 @@
                         </div>
                     </div>
 
-                    <h3>📋 Minimale Systeemvereisten</h3>
+                    <h3>📋 Gedetailleerde Systeemvereisten</h3>
                     <table>
                         <tr>
                             <th>Component</th>
                             <th>Minimaal</th>
                             <th>Aanbevolen</th>
+                            <th>Voor Lab</th>
+                            <th>Voor Productie</th>
                         </tr>
                         <tr>
-                            <td>Windows Versie</td>
+                            <td><strong>Windows Versie</strong></td>
                             <td>Windows 10/11 Pro</td>
                             <td>Windows 10/11 Enterprise/Education</td>
+                            <td>Windows 11 Pro</td>
+                            <td>Windows 11 Enterprise</td>
                         </tr>
                         <tr>
-                            <td>Processor</td>
+                            <td><strong>Processor</strong></td>
                             <td>4 cores met VT-x/AMD-V</td>
                             <td>8+ cores met VT-x/AMD-V + SLAT</td>
+                            <td>6 cores i5/R5</td>
+                            <td>8+ cores i7/R7</td>
                         </tr>
                         <tr>
-                            <td>RAM</td>
+                            <td><strong>RAM</strong></td>
                             <td>16 GB</td>
                             <td>32 GB of meer</td>
+                            <td>32 GB DDR4</td>
+                            <td>64 GB+ DDR4</td>
                         </tr>
                         <tr>
-                            <td>Opslag</td>
+                            <td><strong>Opslag</strong></td>
                             <td>256 GB SSD</td>
                             <td>512 GB NVMe SSD</td>
+                            <td>512 GB NVMe</td>
+                            <td>1 TB+ NVMe RAID</td>
                         </tr>
                         <tr>
-                            <td>Netwerk</td>
+                            <td><strong>Netwerk</strong></td>
                             <td>1x Gigabit NIC</td>
                             <td>2x Gigabit NIC</td>
+                            <td>1x Gigabit</td>
+                            <td>2x Gigabit/10G</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GPU</strong></td>
+                            <td>Integrated graphics</td>
+                            <td>Dedicated GPU 4GB+</td>
+                            <td>Integrated</td>
+                            <td>Dedicated 8GB+</td>
                         </tr>
                     </table>
+
+                    <h4>🔧 Hardware Virtualisatie Vereisten</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Intel VT-x:</strong> Hardware virtualisatie ondersteuning voor Intel processors</li>
+                        <li><strong>AMD-V:</strong> AMD Virtualization (SVM) voor AMD processors</li>
+                        <li><strong>SLAT (EPT/NPT):</strong> Second Level Address Translation voor betere performance</li>
+                        <li><strong>VT-d/IOMMU:</strong> Direct I/O passthrough voor devices</li>
+                        <li><strong>Execute Disable (XD/NX):</strong> Hardware DEP ondersteuning</li>
+                    </ul>
+
+                    <h4>💡 Lab Setup Tips</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>CPU Allocation:</strong> Reserveer minimaal 2 cores per VM voor goede performance</li>
+                        <li><strong>Memory Planning:</strong> Tel 2GB overhead per VM + gast OS requirements</li>
+                        <li><strong>Storage Strategy:</strong> Gebruik SSD voor VM opslag, HDD voor archief</li>
+                        <li><strong>Network Design:</strong> Plan IP ranges zorgvuldig om conflicten te voorkomen</li>
+                        <li><strong>Backup Strategy:</strong> Maak regelmatig snapshots voor disaster recovery</li>
+                    </ul>
 
                     <h3>🔧 Uitvoeringsstappen</h3>
                     <ul class="steps-list">
@@ -643,44 +679,141 @@ Start-VM "LAB-DC01"</pre>
                                 <pre>Install-ADDSForest -DomainName "lab.local" -DomainNetbiosName "LAB" -InstallDns:$true</pre>
                                 <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
                             </div>
+                            <p>Deze cmdlet installeert AD DS met geïntegreerde DNS server voor naamsresolutie.</p>
                         </li>
 
                         <li class="step-item">
                             <input type="checkbox" onchange="updateProgress()">
-                            <strong>Stap 5.3: FSMO Roles Uitleg</strong>
-                            <p>FSMO (Flexible Single Master Operations) rollen zijn speciale taken in Active Directory:</p>
+                            <strong>Stap 5.2b: DNS Server Gedetailleerde Configuratie</strong>
+                            <p>DNS (Domain Name System) is essentieel voor Active Directory en vertaalt hostnamen naar IP-adressen.</p>
+
+                            <h4>🌐 DNS Zone Types</h4>
+                            <table style="margin-top: 10px;">
+                                <tr>
+                                    <th>Zone Type</th>
+                                    <th>Beschrijving</th>
+                                    <th>Gebruik</th>
+                                    <th>Replicatie</th>
+                                </tr>
+                                <tr>
+                                    <td><strong>Primary Zone</strong></td>
+                                    <td>Lees-schrijf zone met volledige autoriteit</td>
+                                    <td>Hoofdzone voor domein</td>
+                                    <td>Handmatig of AD geïntegreerd</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Secondary Zone</strong></td>
+                                    <td>Read-only kopie van primary zone</td>
+                                    <td>Redundantie en load balancing</td>
+                                    <td>Zone transfers van primary</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Stub Zone</strong></td>
+                                    <td>Bevat alleen NS records voor delegatie</td>
+                                    <td>Domein delegatie</td>
+                                    <td>Alleen NS records</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Forward Lookup</strong></td>
+                                    <td>Hostnaam naar IP-adres</td>
+                                    <td>Normale DNS resoluties</td>
+                                    <td>AD geïntegreerd</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Reverse Lookup</strong></td>
+                                    <td>IP-adres naar hostnaam</td>
+                                    <td>PTR records voor reverse DNS</td>
+                                    <td>AD geïntegreerd</td>
+                                </tr>
+                            </table>
+
+                            <h4>⚙️ Geavanceerde DNS Features</h4>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li><strong>DNSSEC:</strong> Beveiliging van DNS queries met digitale handtekeningen</li>
+                                <li><strong>Conditional Forwarding:</strong> Specifieke forwarding voor bepaalde domeinen</li>
+                                <li><strong>GlobalNames Zone:</strong> Single-label name resoluties</li>
+                                <li><strong>DNS Policies:</strong> Traffic management en filtering</li>
+                                <li><strong>Response Rate Limiting:</strong> Bescherming tegen DNS amplification attacks</li>
+                            </ul>
+
+                            <div class="command-box">
+                                <pre># DNS zone configuratie
+Add-DnsServerPrimaryZone -Name "lab.local" -ReplicationScope "Domain"
+Add-DnsServerResourceRecordA -Name "dc01" -ZoneName "lab.local" -IPv4Address "10.0.0.1"
+
+# Reverse lookup zone
+Add-DnsServerPrimaryZone -NetworkId "10.0.0.0/24" -ReplicationScope "Domain"
+Add-DnsServerResourceRecordPtr -Name "1" -ZoneName "0.0.10.in-addr.arpa" -PtrDomainName "dc01.lab.local"
+
+# DNS forwarding
+Add-DnsServerConditionalForwarderZone -Name "external.com" -MasterServers "8.8.8.8", "8.8.4.4"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.3: FSMO Roles Uitgebreide Uitleg</strong>
+                            <p>FSMO (Flexible Single Master Operations) rollen zijn gespecialiseerde taken in Active Directory die om redenen van data consistentie door slechts één domain controller tegelijkertijd mogen worden uitgevoerd:</p>
+
+                            <h4>🌲 Forest-Level FSMO Roles</h4>
                             <table style="margin-top: 10px;">
                                 <tr>
                                     <th>Rol</th>
                                     <th>Beschrijving</th>
-                                    <th>Scope</th>
+                                    <th>Impact</th>
+                                    <th>Herstel</th>
                                 </tr>
                                 <tr>
                                     <td><strong>Schema Master</strong></td>
-                                    <td>Beheert schema wijzigingen</td>
-                                    <td>Forest</td>
+                                    <td>Beheert Active Directory schema wijzigingen en extensies</td>
+                                    <td>Forest-wide schema consistency</td>
+                                    <td>Automatisch herstel bij uitval</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Domain Naming Master</strong></td>
-                                    <td>Beheert domein toevoegingen/verwijderingen</td>
-                                    <td>Forest</td>
+                                    <td>Beheert toevoeging/verwijdering van domains en application partitions</td>
+                                    <td>Voorkomt domein naam conflicten</td>
+                                    <td>Handmatig overzetten vereist</td>
+                                </tr>
+                            </table>
+
+                            <h4>🏢 Domain-Level FSMO Roles</h4>
+                            <table style="margin-top: 10px;">
+                                <tr>
+                                    <th>Rol</th>
+                                    <th>Beschrijving</th>
+                                    <th>Impact</th>
+                                    <th>Herstel</th>
                                 </tr>
                                 <tr>
                                     <td><strong>PDC Emulator</strong></td>
-                                    <td>Password changes, time sync, DFS root</td>
-                                    <td>Domain</td>
+                                    <td>Password changes, account lockouts, time synchronization, DFS root</td>
+                                    <td>Kritisch voor user authenticatie</td>
+                                    <td>Direct herstel nodig</td>
                                 </tr>
                                 <tr>
                                     <td><strong>RID Master</strong></td>
-                                    <td>Beheert RID pools voor security principals</td>
-                                    <td>Domain</td>
+                                    <td>Beheert RID pools voor unieke security identifiers</td>
+                                    <td>Voorkomt SID conflicten</td>
+                                    <td>Automatisch bij nieuwe objects</td>
                                 </tr>
                                 <tr>
                                     <td><strong>Infrastructure Master</strong></td>
-                                    <td>Beheert cross-domain object references</td>
-                                    <td>Domain</td>
+                                    <td>Beheert cross-domain object references en phantom objects</td>
+                                    <td>Belangrijk in multi-domain forests</td>
+                                    <td>Automatisch onderhoud</td>
                                 </tr>
                             </table>
+
+                            <h4>🎯 FSMO Best Practices</h4>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li><strong>Plaatsing:</strong> PDC Emulator op meest gebruikte DC, Infrastructure Master niet op GC</li>
+                                <li><strong>Monitoring:</strong> Controleer regelmatig FSMO rol houders</li>
+                                <li><strong>Documentatie:</strong> Houd FSMO rol plaatsing bijgewerkt</li>
+                                <li><strong>Backup:</strong> Backup FSMO rol houders frequenter</li>
+                                <li><strong>Redundantie:</strong> Zorg voor secondary FSMO rol houders</li>
+                            </ul>
                         </li>
 
                         <li class="step-item">
@@ -739,18 +872,216 @@ Move-ADDirectoryServerOperationMasterRole -Identity "LAB-DC01" -OperationMasterR
 
                         <li class="step-item">
                             <input type="checkbox" onchange="updateProgress()">
-                            <strong>Stap 5.8: DHCP Security Settings</strong>
-                            <p>Configureer DHCP beveiligingsopties:</p>
+                            <strong>Stap 5.8: DHCP Gedetailleerde Configuratie</strong>
+                            <p>DHCP (Dynamic Host Configuration Protocol) beheert automatisch IP-adres toewijzing en netwerkconfiguratie.</p>
+
+                            <h4>📊 DHCP Lease Process</h4>
+                            <ol style="margin-left: 20px; margin-top: 10px;">
+                                <li><strong>DHCPDISCOVER:</strong> Client zoekt DHCP server</li>
+                                <li><strong>DHCPOFFER:</strong> Server biedt IP-adres aan</li>
+                                <li><strong>DHCPREQUEST:</strong> Client accepteert aanbod</li>
+                                <li><strong>DHCPACK:</strong> Server bevestigt toewijzing</li>
+                                <li><strong>DHCPRELEASE:</strong> Client geeft IP-adres vrij (optioneel)</li>
+                            </ol>
+
+                            <h4>🛡️ DHCP Security Features</h4>
+                            <table style="margin-top: 10px;">
+                                <tr>
+                                    <th>Security Feature</th>
+                                    <th>Beschrijving</th>
+                                    <th>Voordeel</th>
+                                </tr>
+                                <tr>
+                                    <td><strong>MAC Filtering</strong></td>
+                                    <td>Alleen specifieke MAC adressen krijgen IP</td>
+                                    <td>Voorkomt onbevoegde toegang</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Name Protection</strong></td>
+                                    <td>Beschermt tegen DNS spoofing</td>
+                                    <td>Voorkomt man-in-the-middle attacks</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Conflict Detection</strong></td>
+                                    <td>Controleert op IP-conflicten</td>
+                                    <td>Garantieert unieke IP-adressen</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>DHCP Audit Logging</strong></td>
+                                    <td>Gedetailleerde logging van alle acties</td>
+                                    <td>Forensische analyse mogelijk</td>
+                                </tr>
+                            </table>
+
+                            <h4>🔄 DHCP Failover</h4>
                             <ul style="margin-left: 20px; margin-top: 10px;">
-                                <li>🔐 Schakel conflict detection in</li>
-                                <li>📝 Configureer audit logging</li>
-                                <li>🛡️ Stel MAC address filtering in indien nodig</li>
+                                <li><strong>Load Balance Mode:</strong> 50/50 verdeling tussen servers</li>
+                                <li><strong>Hot Standby Mode:</strong> Primaire server actief, secundaire standby</li>
+                                <li><strong>State Switchover:</strong> Automatische failover bij uitval</li>
                             </ul>
+
                             <div class="command-box">
-                                <pre>Set-DhcpServerv4OptionValue -ScopeId 10.0.0.0 -Router 10.0.0.1 -DnsServer 10.0.0.1</pre>
+                                <pre># DHCP failover configuratie
+Add-DhcpServerv4Failover -Name "DHCP-Failover" -PartnerServer "LAB-DC02.lab.local" -ScopeId 10.0.0.0 -LoadBalancePercent 50 -MaxClientLeadTime 1:00:00 -AutoStateTransition $true
+
+# DHCP security instellingen
+Set-DhcpServerv4FilterList -Allow $true -List "08-00-27-00-00-01"
+Set-DhcpServerAuditLog -Enable $true -MaxMBFileSize 70 -Path "C:\Logs\DHCP"
+
+# DHCP conflict detection
+Set-DhcpServerv4OptionValue -ScopeId 10.0.0.0 -Router 10.0.0.1 -DnsServer 10.0.0.1 -DnsDomain "lab.local"
+Set-DhcpServerSetting -ConflictDetectionAttempts 2
+
+# DHCP reservations voor servers
+Add-DhcpServerv4Reservation -ScopeId 10.0.0.0 -IPAddress 10.0.0.10 -ClientId "08-00-27-00-00-02" -Description "File Server"</pre>
                                 <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
                             </div>
                         </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.9: DHCP Monitoring en Troubleshooting</strong>
+                            <div class="command-box">
+                                <pre># DHCP server status controleren
+Get-DhcpServerv4Statistics
+
+# DHCP lease informatie bekijken
+Get-DhcpServerv4Lease -ScopeId 10.0.0.0
+
+# DHCP scope statistieken
+Get-DhcpServerv4ScopeStatistics -ScopeId 10.0.0.0
+
+# DHCP server events bekijken
+Get-EventLog -LogName "Microsoft-Windows-DHCP-Server/Operational" -Newest 20
+
+# DHCP database backup
+Export-DhcpServer -File "C:\Backup\DHCP-Config.xml" -Leases $true</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Gebruik deze cmdlets voor monitoring en troubleshooting van DHCP services.</p>
+                        </li>
+                    <h3>🔧 Group Policy Management</h3>
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Group Policy is een krachtig hulpmiddel voor centraal beheer van gebruikers- en computerinstellingen in een Active Directory domein.
+                        </div>
+                    </div>
+
+                    <p>Group Policy Objects (GPOs) bevatten instellingen die worden toegepast op gebruikers en computers. Ze worden opgeslagen in Active Directory en kunnen worden gekoppeld aan sites, domeinen of organizational units (OU's).</p>
+
+                    <h4>🌐 Soorten Group Policies</h4>
+                    <table style="margin-top: 10px;">
+                        <tr>
+                            <th>Type</th>
+                            <th>Beschrijving</th>
+                            <th>Scope</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Local Group Policy</strong></td>
+                            <td>Alleen voor lokale computer</td>
+                            <td>Enkele computer</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Domain Group Policy</strong></td>
+                            <td>Gedeeld in domein</td>
+                            <td>Domein, site, OU</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Starter GPO</strong></td>
+                            <td>Sjabloon voor nieuwe GPOs</td>
+                            <td>Herbruikbaar</td>
+                        </tr>
+                    </table>
+
+                    <h4>🛠️ Group Policy Management Console (GPMC)</h4>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.10: Installeer GPMC</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name GPMC</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.11: Open Group Policy Management</strong>
+                            <div class="command-box">
+                                <pre>gpmc.msc</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h4>📝 GPO Aanmaken en Configureren</h4>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.12: Maak Nieuwe GPO</strong>
+                            <div class="command-box">
+                                <pre>New-GPO -Name "LabUserPolicy" -Comment "Standaard gebruikersbeleid voor lab"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.13: Bewerk GPO Instellingen</strong>
+                            <p>Gebruik Group Policy Editor om instellingen te configureren:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Computer Configuration → Policies → Windows Settings</li>
+                                <li>User Configuration → Policies → Administrative Templates</li>
+                            </ul>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.14: Koppel GPO aan OU</strong>
+                            <div class="command-box">
+                                <pre>New-GPLink -Name "LabUserPolicy" -Target "OU=Users,DC=lab,DC=local" -LinkEnabled Yes</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h4>🔍 Group Policy Troubleshooting</h4>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.15: Controleer GPO Toepassing</strong>
+                            <div class="command-box">
+                                <pre>gpresult /r</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.16: Forceer Group Policy Update</strong>
+                            <div class="command-box">
+                                <pre>gpupdate /force</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h4>💡 Best Practices</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Gebruik beschrijvende namen voor GPOs</li>
+                        <li>Test GPOs in een test OU voordat je ze breed toepast</li>
+                        <li>Gebruik GPO filtering voor specifieke gebruikers/groepen</li>
+                        <li>Documenteer GPO instellingen en doelen</li>
+                        <li>Monitor GPO processing met event logs</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <div>
+                            <strong>Let op:</strong> Group Policy wijzigingen kunnen invloed hebben op systeemgedrag. Test altijd in een labomgeving.
+                        </div>
+                    </div>
                     </ul>
                 </div>
             </div>
@@ -814,10 +1145,10 @@ New-NetFirewallRule -DisplayName "Allow HTTPS" -Direction Inbound -Protocol TCP 
                 </div>
             </div>
 
-            <!-- Sectie 7: FSLogix Configuration -->
-            <div class="section" id="section-7">
-                <div class="section-header" onclick="toggleSection(7)">
-                    <h2><span class="section-number">7</span> FSLogix Configuration</h2>
+            <!-- Sectie 6: FSLogix Configuration -->
+            <div class="section" id="section-6">
+                <div class="section-header" onclick="toggleSection(6)">
+                    <h2><span class="section-number">6</span> FSLogix Configuration</h2>
                 </div>
                 <div class="section-content">
                     <div class="info-box">
@@ -885,10 +1216,10 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\FSLogix\ODFC" -Name "SizeInMBs" -Value 51
                 </div>
             </div>
 
-            <!-- Sectie 8: Troubleshooting -->
-            <div class="section" id="section-8">
-                <div class="section-header" onclick="toggleSection(8)">
-                    <h2><span class="section-number">8</span> Troubleshooting</h2>
+            <!-- Sectie 7: Troubleshooting -->
+            <div class="section" id="section-7">
+                <div class="section-header" onclick="toggleSection(7)">
+                    <h2><span class="section-number">7</span> Troubleshooting</h2>
                 </div>
                 <div class="section-content">
                     <div class="info-box">
@@ -972,10 +1303,10 @@ Get-Counter -Counter "\PhysicalDisk(_Total)\% Disk Time" -SampleInterval 2 -MaxS
                 </div>
             </div>
 
-            <!-- Sectie 9: Server Management I -->
-            <div class="section" id="section-9">
-                <div class="section-header" onclick="toggleSection(9)">
-                    <h2><span class="section-number">9</span> Server Management I</h2>
+            <!-- Sectie 8: Server Management I -->
+            <div class="section" id="section-8">
+                <div class="section-header" onclick="toggleSection(8)">
+                    <h2><span class="section-number">8</span> Server Management I</h2>
                 </div>
                 <div class="section-content">
                     <div class="info-box">
@@ -1094,10 +1425,10 @@ Install-WindowsUpdate -AcceptAll -AutoReboot</pre>
                 </div>
             </div>
 
-            <!-- Sectie 10: RDS (Remote Desktop Services) -->
-            <div class="section" id="section-10">
-                <div class="section-header" onclick="toggleSection(10)">
-                    <h2><span class="section-number">10</span> RDS (Remote Desktop Services)</h2>
+            <!-- Sectie 9: RDS (Remote Desktop Services) -->
+            <div class="section" id="section-9">
+                <div class="section-header" onclick="toggleSection(9)">
+                    <h2><span class="section-number">9</span> RDS (Remote Desktop Services)</h2>
                 </div>
                 <div class="section-content">
                     <div class="info-box">
@@ -1107,39 +1438,95 @@ Install-WindowsUpdate -AcceptAll -AutoReboot</pre>
                         </div>
                     </div>
 
-                    <h3>🖥️ RDS Componenten Overzicht</h3>
+                    <h3>🖥️ RDS Deployment Scenario's</h3>
+                    <table style="margin-top: 10px;">
+                        <tr>
+                            <th>Scenario</th>
+                            <th>Beschrijving</th>
+                            <th>Gebruik</th>
+                            <th>Voordelen</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Session-based Desktop</strong></td>
+                            <td>Gedeelde server sessies</td>
+                            <td>Kantoorwerk, call centers</td>
+                            <td>Kostenefficiënt, centraal beheer</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Personal Virtual Desktop</strong></td>
+                            <td>Persoonlijke virtuele desktops</td>
+                            <td>Ontwikkelaars, power users</td>
+                            <td>Volledige desktop ervaring</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pooled Virtual Desktop</strong></td>
+                            <td>Niet-persistente virtuele desktops</td>
+                            <td>Shifts, kiosks</td>
+                            <td>Automatisch reset, security</td>
+                        </tr>
+                        <tr>
+                            <td><strong>RemoteApp</strong></td>
+                            <td>Individuele applicaties</td>
+                            <td>Legacy apps, specifieke tools</td>
+                            <td>App-isolatie, geen full desktop</td>
+                        </tr>
+                    </table>
+
+                    <h4>🏗️ RDS Componenten Architectuur</h4>
                     <table style="margin-top: 10px;">
                         <tr>
                             <th>Component</th>
                             <th>Functie</th>
                             <th>Vereist</th>
+                            <th>High Availability</th>
                         </tr>
                         <tr>
                             <td><strong>Connection Broker</strong></td>
-                            <td>Beheert RDS sessies en load balancing</td>
+                            <td>Beheert RDS sessies, load balancing, reconnecties</td>
                             <td>Ja</td>
+                            <td>Cluster van 2+ servers</td>
                         </tr>
                         <tr>
                             <td><strong>Session Host</strong></td>
-                            <td>Host virtuele desktops en applicaties</td>
+                            <td>Host virtuele desktops en RemoteApps</td>
                             <td>Ja</td>
+                            <td>Load balanced farm</td>
                         </tr>
                         <tr>
                             <td><strong>Web Access</strong></td>
-                            <td>Web-based toegang tot RDS resources</td>
+                            <td>Web-based toegang via HTML5 client</td>
                             <td>Optioneel</td>
+                            <td>NLB of cluster</td>
                         </tr>
                         <tr>
                             <td><strong>Gateway</strong></td>
-                            <td>Veilige externe toegang</td>
+                            <td>Veilige externe toegang via HTTPS</td>
                             <td>Voor extern</td>
+                            <td>NLB of cluster</td>
                         </tr>
                         <tr>
                             <td><strong>Licensing</strong></td>
-                            <td>Beheert RDS client licenties</td>
+                            <td>Beheert RDS CALs en licentie compliance</td>
                             <td>Voor productie</td>
+                            <td>Redundant servers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Virtualization Host</strong></td>
+                            <td>Host voor personal/pooled VDI</td>
+                            <td>Voor VDI</td>
+                            <td>Hyper-V cluster</td>
                         </tr>
                     </table>
+
+                    <h4>⚙️ Geavanceerde RDS Configuratie</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Session Timeouts:</strong> Configureer idle, disconnected, active timeouts</li>
+                        <li><strong>Load Balancing:</strong> Round-robin, least-loaded, CPU-based distributie</li>
+                        <li><strong>Profile Management:</strong> FSLogix, roaming profiles, local profiles</li>
+                        <li><strong>Printer Management:</strong> Client printer redirection, network printers</li>
+                        <li><strong>Device Redirection:</strong> USB, drives, audio, video redirection</li>
+                        <li><strong>Security Policies:</strong> NLA, SSL/TLS, firewall rules</li>
+                    </ul>
 
                     <h3>🔧 RDS Installatie en Configuratie</h3>
                     <ul class="steps-list">
@@ -1219,10 +1606,10 @@ Set-RDLicenseConfiguration -LicenseServer "LAB-DC01.lab.local" -Mode PerUser</pr
                 </div>
             </div>
 
-            <!-- Sectie 11: File Services -->
-            <div class="section" id="section-11">
-                <div class="section-header" onclick="toggleSection(11)">
-                    <h2><span class="section-number">11</span> File Services</h2>
+            <!-- Sectie 10: File Services -->
+            <div class="section" id="section-10">
+                <div class="section-header" onclick="toggleSection(10)">
+                    <h2><span class="section-number">10</span> File Services</h2>
                 </div>
                 <div class="section-content">
                     <div class="info-box">
@@ -1232,7 +1619,54 @@ Set-RDLicenseConfiguration -LicenseServer "LAB-DC01.lab.local" -Mode PerUser</pr
                         </div>
                     </div>
 
-                    <h3>📁 File Server Rollen</h3>
+                    <h3>📁 Geavanceerde File Services Concepten</h3>
+                    <h4>🔐 NTFS vs Share Permissions</h4>
+                    <p>Windows gebruikt een twee-laags beveiligingsmodel voor bestandstoegang:</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Share Permissions:</strong> Netwerk-level toegang controle (SMB/CIFS)</li>
+                        <li><strong>NTFS Permissions:</strong> File system level toegang controle</li>
+                        <li><strong>Effective Permissions:</strong> Most restrictive combinatie van beide</li>
+                        <li><strong>Inheritance:</strong> Permissions worden doorgegeven aan subfolders/bestanden</li>
+                    </ul>
+
+                    <h4>🌲 DFS (Distributed File System) Architectuur</h4>
+                    <table style="margin-top: 10px;">
+                        <tr>
+                            <th>DFS Component</th>
+                            <th>Functie</th>
+                            <th>Voordelen</th>
+                            <th>Use Case</th>
+                        </tr>
+                        <tr>
+                            <td><strong>DFS Namespace</strong></td>
+                            <td>Virtuele hiërarchie van gedeelde folders</td>
+                            <td>Eenvoudige toegang, load balancing</td>
+                            <td>Gecentraliseerde bestandstoegang</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DFS Replication</strong></td>
+                            <td>Automatische synchronisatie tussen servers</td>
+                            <td>Redundantie, WAN optimalisatie</td>
+                            <td>Disaster recovery, branch offices</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DFS Namespaces</strong></td>
+                            <td>Logische groepering van shares</td>
+                            <td>Transparante toegang, failover</td>
+                            <td>High availability file shares</td>
+                        </tr>
+                    </table>
+
+                    <h4>⚡ Advanced File Server Features</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>BranchCache:</strong> WAN optimalisatie voor remote offices</li>
+                        <li><strong>File Server Resource Manager:</strong> Quota's, screening, reporting</li>
+                        <li><strong>Storage Spaces Direct:</strong> Software-defined storage</li>
+                        <li><strong>Work Folders:</strong> Device-agnostic file synchronisatie</li>
+                        <li><strong>SMB 3.1.1:</strong> Geavanceerde security en performance</li>
+                    </ul>
+
+                    <h3>📁 File Server Implementatie</h3>
                     <ul class="steps-list">
                         <li class="step-item">
                             <input type="checkbox" onchange="updateProgress()">
@@ -1241,7 +1675,7 @@ Set-RDLicenseConfiguration -LicenseServer "LAB-DC01.lab.local" -Mode PerUser</pr
                                 <pre>Install-WindowsFeature -Name FileAndStorage-Services, File-Services -IncludeManagementTools</pre>
                                 <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
                             </div>
-                            <p>Installeer de File Server rol en management tools.</p>
+                            <p>Installeer de File Server rol met alle benodigde management tools voor geavanceerde file services.</p>
                         </li>
 
                         <li class="step-item">
@@ -1309,10 +1743,10 @@ New-DfsNamespace -Name "LabNamespace" -Path "\\lab.local\LabNamespace" -Type Dom
                 </div>
             </div>
 
-            <!-- Sectie 12: Server Management II -->
-            <div class="section" id="section-12">
-                <div class="section-header" onclick="toggleSection(12)">
-                    <h2><span class="section-number">12</span> Server Management II</h2>
+            <!-- Sectie 11: Server Management II -->
+            <div class="section" id="section-11">
+                <div class="section-header" onclick="toggleSection(11)">
+                    <h2><span class="section-number">11</span> Server Management II</h2>
                 </div>
                 <div class="section-content">
                     <div class="info-box">
@@ -1322,7 +1756,51 @@ New-DfsNamespace -Name "LabNamespace" -Path "\\lab.local\LabNamespace" -Type Dom
                         </div>
                     </div>
 
-                    <h3>⚡ PowerShell Remoting</h3>
+                    <h3>⚡ Geavanceerde PowerShell Automatisering</h3>
+                    <h4>🔧 PowerShell Remoting Concepten</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>WS-Management:</strong> Protocol voor remote PowerShell communicatie</li>
+                        <li><strong>TrustedHosts:</strong> Lijst van vertrouwde remote computers</li>
+                        <li><strong>Sessions:</strong> Persistente verbindingen voor multiple commando's</li>
+                        <li><strong>Implicit Remoting:</strong> Remote modules importeren als lokale</li>
+                        <li><strong>JEA (Just Enough Administration):</strong> Role-based access restriction</li>
+                    </ul>
+
+                    <h4>📊 PowerShell Automation Voorbeelden</h4>
+                    <table style="margin-top: 10px;">
+                        <tr>
+                            <th>Use Case</th>
+                            <th>PowerShell Cmdlet</th>
+                            <th>Beschrijving</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Bulk User Management</strong></td>
+                            <td>New-ADUser, Set-ADUser</td>
+                            <td>Geautomatiseerde user account creatie</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Server Inventory</strong></td>
+                            <td>Get-WmiObject, Invoke-Command</td>
+                            <td>Hardware/software inventarisatie</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Patch Management</strong></td>
+                            <td>Get-WindowsUpdate, Install-WindowsUpdate</td>
+                            <td>Automatische updates</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Log Analysis</strong></td>
+                            <td>Get-EventLog, Get-WinEvent</td>
+                            <td>Geautomatiseerde log monitoring</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Storage Management</strong></td>
+                            <td>Get-Disk, New-Volume</td>
+                            <td>Disk en volume beheer</td>
+                        </tr>
+                    </table>
+
+                    <h3>⚡ PowerShell Remoting Setup</h3>
                     <ul class="steps-list">
                         <li class="step-item">
                             <input type="checkbox" onchange="updateProgress()">
@@ -1332,7 +1810,7 @@ New-DfsNamespace -Name "LabNamespace" -Path "\\lab.local\LabNamespace" -Type Dom
 Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*" -Force</pre>
                                 <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
                             </div>
-                            <p>Schakel PowerShell remoting in voor remote beheer.</p>
+                            <p>Configureert WS-Management voor secure remote PowerShell toegang.</p>
                         </li>
 
                         <li class="step-item">
@@ -1416,10 +1894,10 @@ Register-ScheduledTask -TaskName "DailyProcessCheck" -Action $action -Trigger $t
                 </div>
             </div>
 
-            <!-- Sectie 13: RRAS - Remote Connections -->
-            <div class="section" id="section-13">
-                <div class="section-header" onclick="toggleSection(13)">
-                    <h2><span class="section-number">13</span> RRAS - Remote Connections</h2>
+            <!-- Sectie 12: RRAS - Remote Connections -->
+            <div class="section" id="section-12">
+                <div class="section-header" onclick="toggleSection(12)">
+                    <h2><span class="section-number">12</span> RRAS - Remote Connections</h2>
                 </div>
                 <div class="section-content">
                     <div class="info-box">
@@ -1530,10 +2008,10 @@ New-NetFirewallRule -DisplayName "Allow PPTP GRE" -Direction Inbound -Protocol 4
                 </div>
             </div>
 
-            <!-- Sectie 14: Direct Access -->
-            <div class="section" id="section-14">
-                <div class="section-header" onclick="toggleSection(14)">
-                    <h2><span class="section-number">14</span> Direct Access</h2>
+            <!-- Sectie 13: Direct Access -->
+            <div class="section" id="section-13">
+                <div class="section-header" onclick="toggleSection(13)">
+                    <h2><span class="section-number">13</span> Direct Access</h2>
                 </div>
                 <div class="section-content">
                     <div class="info-box">
@@ -1626,10 +2104,10 @@ IPv4 tunneling</li>
                 </div>
             </div>
 
-            <!-- Sectie 15: Network Policy Server (NPS) -->
-            <div class="section" id="section-15">
-                <div class="section-header" onclick="toggleSection(15)">
-                    <h2><span class="section-number">15</span> Network Policy Server (NPS)</h2>
+            <!-- Sectie 14: Network Policy Server (NPS) -->
+            <div class="section" id="section-14">
+                <div class="section-header" onclick="toggleSection(14)">
+                    <h2><span class="section-number">14</span> Network Policy Server (NPS)</h2>
                 </div>
                 <div class="section-content">
                     <div class="info-box">
@@ -1774,6 +2252,907 @@ IPv4 tunneling</li>
                         <span class="info-icon">✅</span>
                         <div>
                             <strong>Best Practice:</strong> Test altijd NPS-configuratie met een testclient voordat je productie-implementatie uitvoert.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 15: Print Services -->
+            <div class="section" id="section-15">
+                <div class="section-header" onclick="toggleSection(15)">
+                    <h2><span class="section-number">15</span> Print Services</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Configureer Print Services voor centrale printerbeheer in het netwerk.
+                        </div>
+                    </div>
+
+                    <h3>🖨️ Print Services Overzicht</h3>
+                    <p>Print Services bieden centrale beheer van netwerkprinters en print queues in Windows Server omgevingen.</p>
+
+                    <h3>🔧 Print Services Installatie</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.1: Installeer Print Services</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name Print-Services -IncludeManagementTools</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Installeer de Print Services rol met management tools.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.2: Installeer Print Server</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name Print-Server</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Installeer de Print Server rol voor printer hosting.</p>
+                        </li>
+                    </ul>
+
+                    <h3>🖨️ Printer Management</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.3: Open Print Management Console</strong>
+                            <div class="command-box">
+                                <pre>printmanagement.msc</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Open de Print Management console voor printer beheer.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.4: Voeg Netwerkprinter toe</strong>
+                            <div class="command-box">
+                                <pre>rundll32.exe printui.dll,PrintUIEntry /dd /c\\PrintServer /n"PrinterName"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Voeg een netwerkprinter toe aan de print server.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.5: Configureer Printer Permissions</strong>
+                            <div class="command-box">
+                                <pre># Stel printer permissies in
+$printer = Get-Printer -Name "PrinterName"
+$acl = Get-Acl $printer.Name
+$permission = "LAB\Domain Users","Print",Allow
+$accessRule = New-Object System.Security.AccessControl.AccessRule $permission
+$acl.SetAccessRule($accessRule)
+Set-Acl -Path $printer.Name -AclObject $acl</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Configureer toegangsrechten voor printers.</p>
+                        </li>
+                    </ul>
+
+                    <h3>📊 Print Queue Management</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.6: Monitor Print Queues</strong>
+                            <div class="command-box">
+                                <pre>Get-Printer | Format-Table Name, DriverName, PortName, Shared</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Bekijk alle geïnstalleerde printers en hun status.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.7: Manage Print Jobs</strong>
+                            <div class="command-box">
+                                <pre>Get-PrintJob -PrinterName "PrinterName" | Format-Table DocumentName, UserName, Size, SubmittedTime</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Monitor print jobs in de queue.</p>
+                        </li>
+                    </ul>
+
+                    <h3>🔄 Print Server High Availability</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.8: Configureer Printer Pooling</strong>
+                            <div class="command-box">
+                                <pre># Configureer printer pooling voor load balancing
+Set-Printer -Name "PrinterPool" -PortName "Port1,Port2"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Stel printer pooling in voor hoge beschikbaarheid.</p>
+                        </li>
+                    </ul>
+
+                    <div class="info-box">
+                        <span class="info-icon">💡</span>
+                        <div>
+                            <strong>Tip:</strong> Gebruik Group Policy om printer deployments te automatiseren voor gebruikers.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 16: WSUS (Windows Server Update Services) -->
+            <div class="section" id="section-16">
+                <div class="section-header" onclick="toggleSection(16)">
+                    <h2><span class="section-number">16</span> WSUS (Windows Server Update Services)</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Configureer Windows Server Update Services voor centrale update beheer.
+                        </div>
+                    </div>
+
+                    <h3>🔄 WSUS Overzicht</h3>
+                    <p>WSUS stelt beheerders in staat om Windows updates centraal te beheren en te distribueren naar client computers.</p>
+
+                    <h3>🔧 WSUS Installatie</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 16.1: Installeer WSUS Role</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name UpdateServices -IncludeManagementTools</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Installeer de WSUS rol met management tools.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 16.2: Configureer WSUS</strong>
+                            <div class="command-box">
+                                <pre>& "C:\Program Files\Update Services\Tools\wsusutil.exe" postinstall CONTENT_DIR=C:\WSUS</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Voer de post-installatie configuratie uit.</p>
+                        </li>
+                    </ul>
+
+                    <h3>⚙️ WSUS Configuratie</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 16.3: Open WSUS Console</strong>
+                            <div class="command-box">
+                                <pre>wsus.msc</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Open de WSUS Administration Console.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 16.4: Configureer Products en Classifications</strong>
+                            <p>In WSUS Console:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Ga naar Options > Products and Classifications</li>
+                                <li>Selecteer gewenste producten (Windows 10, Server 2022, etc.)</li>
+                                <li>Selecteer update classifications (Critical, Security, etc.)</li>
+                            </ul>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 16.5: Configureer Sync Schedule</strong>
+                            <div class="command-box">
+                                <pre># Configureer automatische synchronisatie
+# In WSUS Console: Options > Synchronization Schedule</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Stel automatische synchronisatie in met Microsoft Update.</p>
+                        </li>
+                    </ul>
+
+                    <h3>👥 Client Configuration</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 16.6: Configureer Group Policy voor Clients</strong>
+                            <div class="command-box">
+                                <pre># Configureer WSUS server in Group Policy
+Set-GPRegistryValue -Name "WSUS Policy" -Key "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -ValueName "WUServer" -Type String -Value "http://wsus.lab.local:8530"
+Set-GPRegistryValue -Name "WSUS Policy" -Key "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -ValueName "WUStatusServer" -Type String -Value "http://wsus.lab.local:8530"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Configureer clients om WSUS server te gebruiken via Group Policy.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 16.7: Forceer Client Sync</strong>
+                            <div class="command-box">
+                                <pre>wuauclt /detectnow</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Forceer clients om te synchroniseren met WSUS server.</p>
+                        </li>
+                    </ul>
+
+                    <h3>📊 WSUS Monitoring</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 16.8: Monitor Client Status</strong>
+                            <p>In WSUS Console:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Ga naar Computers > All Computers</li>
+                                <li>Bekijk update compliance status</li>
+                                <li>Monitor client connectiviteit</li>
+                            </ul>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 16.9: Generate Reports</strong>
+                            <div class="command-box">
+                                <pre># Genereer update compliance rapport
+# In WSUS Console: Reports > Update Status Summary</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Genereer rapporten over update compliance.</p>
+                        </li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <div>
+                            <strong>Storage:</strong> WSUS vereist aanzienlijke opslagruimte voor updates. Plan minimaal 100GB voor een gemiddelde omgeving.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 17: Performance Monitoring -->
+            <div class="section" id="section-17">
+                <div class="section-header" onclick="toggleSection(17)">
+                    <h2><span class="section-number">17</span> Performance Monitoring</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Configureer performance monitoring tools voor systeemprestatie analyse.
+                        </div>
+                    </div>
+
+                    <h3>📊 Performance Monitoring Tools</h3>
+                    <p>Windows Server biedt uitgebreide tools voor het monitoren van systeemprestaties en het identificeren van bottlenecks.</p>
+
+                    <h3>🔧 Performance Monitor Setup</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 17.1: Open Performance Monitor</strong>
+                            <div class="command-box">
+                                <pre>perfmon.msc</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Open de Performance Monitor console.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 17.2: Maak Data Collector Set</strong>
+                            <div class="command-box">
+                                <pre># Maak een custom data collector set
+# In Performance Monitor: Data Collector Sets > User Defined
+# Rechtsklik > New > Data Collector Set</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Maak een custom data collector set voor specifieke monitoring.</p>
+                        </li>
+                    </ul>
+
+                    <h3>📈 Key Performance Counters</h3>
+                    <table style="margin-top: 10px;">
+                        <tr>
+                            <th>Categorie</th>
+                            <th>Counter</th>
+                            <th>Beschrijving</th>
+                            <th>Waarschuwingsdrempel</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Processor</strong></td>
+                            <td>% Processor Time</td>
+                            <td>Algemeen CPU gebruik</td>
+                            <td>> 80% gemiddeld</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Memory</strong></td>
+                            <td>Available MBytes</td>
+                            <td>Beschikbaar geheugen</td>
+                            <td>< 100 MB</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Disk</strong></td>
+                            <td>% Disk Time</td>
+                            <td>Disk I/O utilization</td>
+                            <td>> 90%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Network</strong></td>
+                            <td>Bytes Total/sec</td>
+                            <td>Netwerk throughput</td>
+                            <td>N/A</td>
+                        </tr>
+                    </table>
+
+                    <h3>🔍 Resource Monitor</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 17.3: Open Resource Monitor</strong>
+                            <div class="command-box">
+                                <pre>resmon.exe</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Open Resource Monitor voor real-time resource monitoring.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 17.4: Monitor Processen</strong>
+                            <div class="command-box">
+                                <pre>Get-Process | Sort-Object CPU -Descending | Select-Object -First 10</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Identificeer processen met hoogste CPU gebruik.</p>
+                        </li>
+                    </ul>
+
+                    <h3>📋 Task Manager Advanced</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 17.5: Task Manager Performance Tab</strong>
+                            <p>In Task Manager:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Bekijk CPU, Memory, Disk, Network usage</li>
+                                <li>Monitor individual process resource consumption</li>
+                                <li>Identify resource-intensive applications</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <h3>📊 Performance Logs</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 17.6: Configureer Performance Logging</strong>
+                            <div class="command-box">
+                                <pre># Start performance logging
+logman start "System Performance" -f csv -o "C:\Logs\PerfLog.csv" -v mmddhhmm</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Configureer automatische performance logging.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 17.7: Analyze Performance Data</strong>
+                            <div class="command-box">
+                                <pre># Import en analyseer performance data
+$data = Import-Csv "C:\Logs\PerfLog.csv"
+$data | Measure-Object -Property "Processor Time" -Average</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Analyseer verzamelde performance data.</p>
+                        </li>
+                    </ul>
+
+                    <h3>🚨 Performance Alerts</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 17.8: Configureer Performance Alerts</strong>
+                            <div class="command-box">
+                                <pre># Maak performance alert
+# In Performance Monitor: Data Collector Sets > User Defined
+# Rechtsklik > New > Data Collector Set > Performance Counter Alert</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Configureer alerts voor performance thresholds.</p>
+                        </li>
+                    </ul>
+
+                    <div class="info-box">
+                        <span class="info-icon">✅</span>
+                        <div>
+                            <strong>Best Practice:</strong> Monitor regelmatig systeemprestaties en identificeer trends om problemen vroegtijdig te detecteren.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sectie 19: Windows Admin Center -->
+            <div class="section" id="section-18">
+                <div class="section-header" onclick="toggleSection(18)">
+                    <h2><span class="section-number">18</span> Windows Admin Center</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Configureer Windows Admin Center voor moderne, browser-gebaseerde serverbeheer.
+                        </div>
+                    </div>
+
+                    <h3>🌐 Windows Admin Center Overzicht</h3>
+                    <p>Windows Admin Center is een moderne beheertool die servers, clusters en Windows 10/11 PC's beheert via een webinterface.</p>
+
+                    <h3>🔧 Installatie en Configuratie</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 18.1: Download Windows Admin Center</strong>
+                            <p>Download de MSI installer van Microsoft's website.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 18.2: Installeer WAC</strong>
+                            <div class="command-box">
+                                <pre>msiexec /i "WindowsAdminCenter.msi" /qn /L*v log.txt SME_PORT=443 SSL_CERTIFICATE_OPTION=generate</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 18.3: Configureer Firewall</strong>
+                            <div class="command-box">
+                                <pre>New-NetFirewallRule -DisplayName "Windows Admin Center" -Direction Inbound -Protocol TCP -LocalPort 443 -Action Allow</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 18.4: Toegang tot WAC</strong>
+                            <p>Open browser en ga naar: https://localhost</p>
+                            <p>Accepteer het zelfondertekende certificaat.</p>
+                        </li>
+                    </ul>
+
+                    <div class="info-box">
+                        <span class="info-icon">💡</span>
+                        <div>
+                            <strong>Tip:</strong> Voor productie gebruik een geldig SSL-certificaat en configureer HTTPS-only toegang.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 19: Storage Spaces and Failover Clustering -->
+            <div class="section" id="section-19">
+                <div class="section-header" onclick="toggleSection(19)">
+                    <h2><span class="section-number">19</span> Storage Spaces and Failover Clustering</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Configureer Storage Spaces Direct en Failover Clustering voor hoge beschikbaarheid.
+                        </div>
+                    </div>
+
+                    <h3>💾 Storage Spaces Direct</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 19.1: Installeer Storage Rollen</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name Storage-Replica, Failover-Clustering -IncludeManagementTools -Restart</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 19.2: Maak Storage Pool</strong>
+                            <div class="command-box">
+                                <pre>$disks = Get-PhysicalDisk | Where-Object CanPool -eq $true
+New-StoragePool -FriendlyName "LabStoragePool" -StorageSubsystemFriendlyName "Windows Storage*" -PhysicalDisks $disks</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 19.3: Maak Virtual Disk</strong>
+                            <div class="command-box">
+                                <pre>New-VirtualDisk -StoragePoolFriendlyName "LabStoragePool" -FriendlyName "LabVirtualDisk" -Size 100GB -ResiliencySettingName Mirror</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h3>🔄 Failover Clustering</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 19.4: Maak Cluster</strong>
+                            <div class="command-box">
+                                <pre>New-Cluster -Name "LabCluster" -Node "LAB-SRV01", "LAB-SRV02" -StaticAddress "10.0.0.100" -NoStorage</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 19.5: Configureer Quorum</strong>
+                            <div class="command-box">
+                                <pre>Set-ClusterQuorum -Cluster "LabCluster" -NodeAndFileShareMajority "\\LAB-DC01\Quorum"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 19.6: Maak Cluster Shared Volume</strong>
+                            <div class="command-box">
+                                <pre>Add-ClusterSharedVolume -Name "CSV1" -Cluster "LabCluster"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <div>
+                            <strong>Let op:</strong> Failover clustering vereist minimaal 2 nodes en gedeelde opslag voor productieomgevingen.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 20: Azure Integration -->
+            <div class="section" id="section-20">
+                <div class="section-header" onclick="toggleSection(20)">
+                    <h2><span class="section-number">20</span> Azure Integration</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Configureer Azure Arc, Azure Backup en andere cloud integratie features.
+                        </div>
+                    </div>
+
+                    <h3>☁️ Azure Arc Setup</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 20.1: Download Azure Arc Agent</strong>
+                            <p>Download van Microsoft Azure portal.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 20.2: Installeer Azure Arc Agent</strong>
+                            <div class="command-box">
+                                <pre>msiexec.exe /i AzureConnectedMachineAgent.msi /l*v installationlog.txt</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 20.3: Connect to Azure Arc</strong>
+                            <div class="command-box">
+                                <pre>azcmagent connect --service-principal-id "your-sp-id" --service-principal-secret "your-sp-secret" --resource-group "your-rg" --tenant-id "your-tenant-id" --location "westeurope" --subscription-id "your-subscription-id"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h3>💾 Azure Backup Integration</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 20.4: Installeer Azure Backup Agent</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name Windows-Server-Backup</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 20.5: Configureer Azure Backup</strong>
+                            <p>Gebruik Microsoft Azure Recovery Services (MARS) agent voor cloud backup.</p>
+                        </li>
+                    </ul>
+
+                    <h3>🔄 Azure Update Management</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 20.6: Schakel Azure Update Management in</strong>
+                            <p>Via Azure Arc of direct Azure Automation.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 20.7: Configureer Update Schedules</strong>
+                            <p>Stel automatische update deployment schedules in via Azure portal.</p>
+                        </li>
+                    </ul>
+
+                    <div class="info-box">
+                        <span class="info-icon">💡</span>
+                        <div>
+                            <strong>Voordeel:</strong> Azure integratie biedt gecentraliseerd beheer, monitoring en backup voor hybride omgevingen.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sectie 21: Group Policy Management -->
+            <div class="section" id="section-21">
+                <div class="section-header" onclick="toggleSection(21)">
+                    <h2><span class="section-number">21</span> Group Policy Management</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Group Policy is een krachtig hulpmiddel voor centraal beheer van gebruikers- en computerinstellingen in een Active Directory domein.
+                        </div>
+                    </div>
+
+                    <p>Group Policy Objects (GPOs) bevatten instellingen die worden toegepast op gebruikers en computers. Ze worden opgeslagen in Active Directory en kunnen worden gekoppeld aan sites, domeinen of organizational units (OU's).</p>
+
+                    <h3>🌐 Soorten Group Policies</h3>
+                    <table style="margin-top: 10px;">
+                        <tr>
+                            <th>Type</th>
+                            <th>Beschrijving</th>
+                            <th>Scope</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Local Group Policy</strong></td>
+                            <td>Alleen voor lokale computer</td>
+                            <td>Enkele computer</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Domain Group Policy</strong></td>
+                            <td>Gedeeld in domein</td>
+                            <td>Domein, site, OU</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Starter GPO</strong></td>
+                            <td>Sjabloon voor nieuwe GPOs</td>
+                            <td>Herbruikbaar</td>
+                        </tr>
+                    </table>
+
+                    <h3>🛠️ Group Policy Management Console (GPMC)</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 21.1: Installeer GPMC</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name GPMC</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 21.2: Open Group Policy Management</strong>
+                            <div class="command-box">
+                                <pre>gpmc.msc</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h3>📝 GPO Aanmaken en Configureren</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 21.3: Maak Nieuwe GPO</strong>
+                            <div class="command-box">
+                                <pre>New-GPO -Name "LabUserPolicy" -Comment "Standaard gebruikersbeleid voor lab"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 21.4: Bewerk GPO Instellingen</strong>
+                            <p>Gebruik Group Policy Editor om instellingen te configureren:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Computer Configuration → Policies → Windows Settings</li>
+                                <li>User Configuration → Policies → Administrative Templates</li>
+                            </ul>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 21.5: Koppel GPO aan OU</strong>
+                            <div class="command-box">
+                                <pre>New-GPLink -Name "LabUserPolicy" -Target "OU=Users,DC=lab,DC=local" -LinkEnabled Yes</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h4>🔍 Group Policy Troubleshooting</h4>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 21.6: Controleer GPO Toepassing</strong>
+                            <div class="command-box">
+                                <pre>gpresult /r</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 21.7: Forceer Group Policy Update</strong>
+                            <div class="command-box">
+                                <pre>gpupdate /force</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h4>💡 Best Practices</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Gebruik beschrijvende namen voor GPOs</li>
+                        <li>Test GPOs in een test OU voordat je ze breed toepast</li>
+                        <li>Gebruik GPO filtering voor specifieke gebruikers/groepen</li>
+                        <li>Documenteer GPO instellingen en doelen</li>
+                        <li>Monitor GPO processing met event logs</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <div>
+                            <strong>Let op:</strong> Group Policy wijzigingen kunnen invloed hebben op systeemgedrag. Test altijd in een labomgeving.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 22: Client Testing en Validatie -->
+            <div class="section" id="section-22">
+                <div class="section-header" onclick="toggleSection(22)">
+                    <h2><span class="section-number">22</span> Client Testing en Validatie</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Test de Windows Server 2022 lab omgeving met een virtuele client computer.
+                        </div>
+                    </div>
+
+                    <h3>🖥️ Client VM Aanmaken</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 22.1: Maak Windows 11 VM</strong>
+                            <div class="command-box">
+                                <pre>New-VM -Name "LAB-CLIENT01" -Generation 2 -MemoryStartupBytes 4GB -SwitchName "NATSwitch" -NewVHDPath "C:\VMs\LAB-CLIENT01.vhdx" -NewVHDSizeBytes 60GB
+Set-VMProcessor -VMName "LAB-CLIENT01" -Count 2
+Add-VMDvdDrive -VMName "LAB-CLIENT01" -Path "C:\ISO\Windows_11.iso"
+$dvd = Get-VMDvdDrive -VMName "LAB-CLIENT01"
+Set-VMFirmware -VMName "LAB-CLIENT01" -FirstBootDevice $dvd
+Start-VM "LAB-CLIENT01"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h3>🌐 Domain Join Test</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 22.2: Controleer Netwerk & DNS</strong>
+                            <div class="command-box">
+                                <pre>ipconfig /all
+nslookup lab-dc01.lab.local</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 22.3: Join Domain</strong>
+                            <p>Settings → Accounts → Access work or school → Join domain "lab.local"</p>
+                        </li>
+                    </ul>
+
+                    <h3>📁 File Services Test</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 22.4: Test File Share</strong>
+                            <div class="command-box">
+                                <pre>net use Z: \\lab-dc01\LabShare /persistent:yes
+echo "Test" > Z:\test.txt</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h3>🔧 Group Policy Test</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 22.5: Controleer GPO</strong>
+                            <div class="command-box">
+                                <pre>gpresult /r
+gpupdate /force</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h3>🌐 Remote Access Test</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 22.6: Test RDP</strong>
+                            <div class="command-box">
+                                <pre>mstsc /v:lab-dc01.lab.local</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <h3>📋 Test Checklist</h3>
+                    <table style="margin-top: 10px;">
+                        <tr>
+                            <th>Service</th>
+                            <th>Test Command</th>
+                            <th>Expected</th>
+                        </tr>
+                        <tr>
+                            <td><strong>DHCP</strong></td>
+                            <td>ipconfig /all</td>
+                            <td>IP: 10.0.0.x</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DNS</strong></td>
+                            <td>nslookup lab-dc01.lab.local</td>
+                            <td>10.0.0.1</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AD</strong></td>
+                            <td>whoami /domain</td>
+                            <td>lab.local</td>
+                        </tr>
+                        <tr>
+                            <td><strong>File Share</strong></td>
+                            <td>net use Z: \\lab-dc01\LabShare</td>
+                            <td>Success</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GPO</strong></td>
+                            <td>gpresult /r</td>
+                            <td>Policies applied</td>
+                        </tr>
+                    </table>
+
+                    <div class="info-box">
+                        <span class="info-icon">✅</span>
+                        <div>
+                            <strong>Validatie:</strong> Gebruik deze checklist om alle server services te testen vanaf de client VM.
                         </div>
                     </div>
                 </div>
