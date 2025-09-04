@@ -1,0 +1,1849 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows Server 2022 - Complete Handleiding</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .progress-container {
+            padding: 20px 40px 30px 40px;
+            margin-top: -10px;
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 0 auto;
+            max-width: 1000px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            border-radius: 15px;
+            width: 0%;
+            transition: width 0.5s ease;
+            position: relative;
+            z-index: 1;
+            box-sizing: border-box;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            color: #333;
+            text-shadow: none;
+            font-size: 12px;
+            text-align: center;
+            white-space: nowrap;
+            width: 100%;
+            z-index: 2;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .section-header:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b4799 100%);
+        }
+
+        .section-header h2 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-number {
+            background: rgba(255,255,255,0.2);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .section-content {
+            padding: 25px;
+            display: none;
+            background: #f9f9f9;
+        }
+
+        .section.active .section-content {
+            display: block;
+        }
+
+        .steps-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .step-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            position: relative;
+        }
+
+        .step-item input[type="checkbox"] {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .command-box {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            position: relative;
+            font-family: 'Consolas', 'Monaco', monospace;
+            overflow-x: auto;
+        }
+
+        .copy-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .warning-box {
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .warning-icon {
+            color: #ef4444;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .info-box {
+            background: #eff6ff;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .info-icon {
+            color: #3b82f6;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🖥️ Windows Server 2022 - Complete Handleiding</h1>
+            <p>Uitgebreide gids voor het beheren van Windows Server 2022</p>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+                <div class="progress-text" id="progressText">0% Voltooid</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Sectie 1: Hyper-V Lab Implementatie -->
+            <div class="section" id="section-1">
+                <div class="section-header" onclick="toggleSection(1)">
+                    <h2><span class="section-number">1</span> Hyper-V Lab Implementatie</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Deze handleiding beschrijft hoe je een volledig functionele Hyper-V lab/testomgeving opzet op Windows 10/11 
+                            voor het draaien van server-VM's (AD DS, DHCP, RDS) en client-VM's.
+                        </div>
+                    </div>
+
+                    <h3>📋 Minimale Systeemvereisten</h3>
+                    <table>
+                        <tr>
+                            <th>Component</th>
+                            <th>Minimaal</th>
+                            <th>Aanbevolen</th>
+                        </tr>
+                        <tr>
+                            <td>Windows Versie</td>
+                            <td>Windows 10/11 Pro</td>
+                            <td>Windows 10/11 Enterprise/Education</td>
+                        </tr>
+                        <tr>
+                            <td>Processor</td>
+                            <td>4 cores met VT-x/AMD-V</td>
+                            <td>8+ cores met VT-x/AMD-V + SLAT</td>
+                        </tr>
+                        <tr>
+                            <td>RAM</td>
+                            <td>16 GB</td>
+                            <td>32 GB of meer</td>
+                        </tr>
+                        <tr>
+                            <td>Opslag</td>
+                            <td>256 GB SSD</td>
+                            <td>512 GB NVMe SSD</td>
+                        </tr>
+                        <tr>
+                            <td>Netwerk</td>
+                            <td>1x Gigabit NIC</td>
+                            <td>2x Gigabit NIC</td>
+                        </tr>
+                    </table>
+
+                    <h3>🔧 Uitvoeringsstappen</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 1.1: Controleer Windows versie</strong>
+                            <div class="command-box">
+                                <pre>winver</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Voer dit uit in de Run dialog (Windows+R) om je exacte Windows versie te zien.</p>
+                        </li>
+                        
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 1.2: Controleer hardwarevirtualisatie</strong>
+                            <div class="command-box">
+                                <pre>systeminfo | findstr /i "Hyper-V"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Open PowerShell als Administrator en voer dit commando uit. Alle vier vereisten moeten "Ja" zijn.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 1.3: BIOS/UEFI virtualisatie inschakelen</strong>
+                            <p>Als virtualisatie niet is ingeschakeld:</p>
+                            <ol style="margin-left: 20px; margin-top: 10px;">
+                                <li>Herstart de computer</li>
+                                <li>Druk op DEL/F2/F10/F12 tijdens opstarten (verschilt per fabrikant)</li>
+                                <li>Zoek naar: Intel VT-x, AMD-V, SVM Mode, Virtualization Technology</li>
+                                <li>Schakel deze optie(s) in</li>
+                                <li>Sla op en herstart (meestal F10)</li>
+                            </ol>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 1.4: Download benodigde ISO bestanden</strong>
+                            <p>Download de volgende ISO's van Microsoft:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Windows Server 2022 (evaluation)</li>
+                                <li>Windows 11 (indien client-VM's nodig zijn)</li>
+                            </ul>
+                            <p>Sla deze op in een folder zoals: <code>C:\ISO\</code></p>
+                        </li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <div>
+                            <strong>Let op voor laptops:</strong> Laptops hebben beperkte koeling. Verwacht thermische throttling en hogere 
+                            ventilatorsnelheid bij intensief gebruik. Plan CPU/RAM conservatief en gebruik Power Mode: "Best Performance".
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 2: Hyper-V Installatie en Configuratie -->
+            <div class="section" id="section-2">
+                <div class="section-header" onclick="toggleSection(2)">
+                    <h2><span class="section-number">2</span> Hyper-V Installatie en Configuratie</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Installeer en configureer Hyper-V op je Windows 10/11 host systeem voor het draaien van virtuele machines.
+                        </div>
+                    </div>
+
+                    <h3>🖱️ Via Windows Features GUI</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 2.1a: Open Windows Features</strong>
+                            <p>1. Druk op Windows toets + R</p>
+                            <p>2. Type: <code>optionalfeatures</code></p>
+                            <p>3. Druk Enter</p>
+                        </li>
+                        
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 2.2a: Selecteer Hyper-V componenten</strong>
+                            <p>Vink de volgende opties aan:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>☑ Hyper-V</li>
+                                <li style="margin-left: 20px;">☑ Hyper-V Management Tools</li>
+                                <li style="margin-left: 20px;">☑ Hyper-V Platform</li>
+                            </ul>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 2.3a: Installeer en herstart</strong>
+                            <p>Klik OK en wacht tot de installatie voltooid is. Windows zal vragen om te herstarten.</p>
+                        </li>
+                    </ul>
+
+                    <h3>⚡ Via PowerShell (Administrator)</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 2.1b: Open PowerShell als Administrator</strong>
+                            <p>Rechtsklik op Start menu → Windows PowerShell (Administrator)</p>
+                        </li>
+                        
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 2.2b: Installeer Hyper-V</strong>
+                            <div class="command-box">
+                                <pre>Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All -NoRestart</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 2.3b: Herstart de computer</strong>
+                            <div class="command-box">
+                                <pre>Restart-Computer</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="info-box">
+                        <span class="info-icon">✅</span>
+                        <div>
+                            <strong>Verificatie:</strong> Na herstart, open Hyper-V Manager via Start Menu of voer <code>virtmgmt.msc</code> uit.
+                            Als dit opent zonder foutmeldingen, is Hyper-V succesvol geïnstalleerd.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 3: Virtual Switch en Netwerk Configuratie -->
+            <div class="section" id="section-3">
+                <div class="section-header" onclick="toggleSection(3)">
+                    <h2><span class="section-number">3</span> Virtual Switch en Netwerk Configuratie</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Configureer virtuele switches voor netwerkconnectiviteit tussen VM's en het fysieke netwerk.
+                        </div>
+                    </div>
+
+                    <h3>🌐 Virtual Switch Types</h3>
+                    <table>
+                        <tr>
+                            <th>Type</th>
+                            <th>Gebruik</th>
+                            <th>Voordelen</th>
+                            <th>Nadelen</th>
+                        </tr>
+                        <tr>
+                            <td><strong>External</strong></td>
+                            <td>VM's direct op fysiek netwerk</td>
+                            <td>Volledige netwerkintegratie</td>
+                            <td>Mogelijke IP-conflicten</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Internal + NAT</strong></td>
+                            <td>Geïsoleerd lab met internet</td>
+                            <td>Geen conflicten, internet toegang</td>
+                            <td>Extra configuratie nodig</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Private</strong></td>
+                            <td>Volledig geïsoleerd lab</td>
+                            <td>Maximale isolatie</td>
+                            <td>Geen internet toegang</td>
+                        </tr>
+                    </table>
+
+                    <h3>🔧 NAT Switch Setup (Aanbevolen voor Lab)</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 3.1: Maak Internal Switch</strong>
+                            <div class="command-box">
+                                <pre>New-VMSwitch -Name "NATSwitch" -SwitchType Internal</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Dit maakt een interne switch aan voor VM communicatie.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 3.2: Configureer IP voor NAT Gateway</strong>
+                            <div class="command-box">
+                                <pre>New-NetIPAddress -IPAddress 10.0.0.1 -PrefixLength 24 -InterfaceAlias "vEthernet (NATSwitch)"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Dit stelt het IP-adres in voor de host op het virtuele netwerk.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 3.3: Configureer NAT</strong>
+                            <div class="command-box">
+                                <pre>New-NetNat -Name "NATNetwork" -InternalIPInterfaceAddressPrefix 10.0.0.0/24</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Dit activeert NAT voor internet toegang vanuit VM's.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 3.4: Verifieer configuratie</strong>
+                            <div class="command-box">
+                                <pre>Get-VMSwitch | Format-Table Name, SwitchType, NetAdapterInterfaceDescription
+Get-NetNat
+Get-NetIPAddress -InterfaceAlias "vEthernet (NATSwitch)"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <div>
+                            <strong>Belangrijke waarschuwing:</strong> Gebruik geen External switch als er al een DHCP server in je netwerk is.
+                            Dit kan IP-conflicten veroorzaken. Voor labs is NAT de veiligste optie.
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-icon">💡</span>
+                        <div>
+                            <strong>Tip:</strong> Voor VM's in het NAT netwerk, gebruik IP-adressen in het bereik 10.0.0.2 - 10.0.0.254
+                            met subnet mask 255.255.255.0 en default gateway 10.0.0.1
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 4: Virtual Machines Aanmaken -->
+            <div class="section" id="section-4">
+                <div class="section-header" onclick="toggleSection(4)">
+                    <h2><span class="section-number">4</span> Virtual Machines Aanmaken</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Maak virtuele machines aan voor je Windows Server 2022 lab omgeving.
+                        </div>
+                    </div>
+
+                    <h3>🖥️ Domain Controller VM (Windows Server 2022)</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 4.1: Maak Domain Controller VM</strong>
+                            <div class="command-box">
+                                <pre># VM aanmaken
+New-VM -Name "LAB-DC01" -Generation 2 -MemoryStartupBytes 4GB -SwitchName "NATSwitch" -NewVHDPath "C:\VMs\LAB-DC01.vhdx" -NewVHDSizeBytes 60GB
+
+# Processor configureren
+Set-VMProcessor -VMName "LAB-DC01" -Count 2
+
+# DVD drive toevoegen en ISO koppelen
+Add-VMDvdDrive -VMName "LAB-DC01" -Path "C:\ISO\Windows_Server_2022.iso"
+
+# Boot order instellen (DVD eerst)
+$dvd = Get-VMDvdDrive -VMName "LAB-DC01"
+Set-VMFirmware -VMName "LAB-DC01" -FirstBootDevice $dvd
+
+# VM starten
+Start-VM "LAB-DC01"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 4.2: Installeer Windows Server</strong>
+                            <ol style="margin-left: 20px; margin-top: 10px;">
+                                <li>Open Hyper-V Manager</li>
+                                <li>Dubbelklik op LAB-DC01 om console te openen</li>
+                                <li>Druk een toets om van DVD te booten</li>
+                                <li>Selecteer: Windows Server 2022 Standard (Desktop Experience)</li>
+                                <li>Accepteer licentievoorwaarden</li>
+                                <li>Kies: Custom Install</li>
+                                <li>Selecteer de drive en klik Next</li>
+                                <li>Stel Administrator wachtwoord in na installatie</li>
+                            </ol>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sectie 5: Server Rollen en Features -->
+            <div class="section" id="section-5">
+                <div class="section-header" onclick="toggleSection(5)">
+                    <h2><span class="section-number">5</span> Server Rollen en Features</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Installeer en configureer essentiële server rollen zoals Active Directory en DHCP.
+                        </div>
+                    </div>
+
+                    <h3>🔧 Active Directory Domain Services (AD DS)</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.1: Installeer AD DS Role</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.2: Configureer Domain Controller</strong>
+                            <div class="command-box">
+                                <pre>Install-ADDSForest -DomainName "lab.local" -DomainNetbiosName "LAB" -InstallDns:$true</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.3: FSMO Roles Uitleg</strong>
+                            <p>FSMO (Flexible Single Master Operations) rollen zijn speciale taken in Active Directory:</p>
+                            <table style="margin-top: 10px;">
+                                <tr>
+                                    <th>Rol</th>
+                                    <th>Beschrijving</th>
+                                    <th>Scope</th>
+                                </tr>
+                                <tr>
+                                    <td><strong>Schema Master</strong></td>
+                                    <td>Beheert schema wijzigingen</td>
+                                    <td>Forest</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Domain Naming Master</strong></td>
+                                    <td>Beheert domein toevoegingen/verwijderingen</td>
+                                    <td>Forest</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>PDC Emulator</strong></td>
+                                    <td>Password changes, time sync, DFS root</td>
+                                    <td>Domain</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>RID Master</strong></td>
+                                    <td>Beheert RID pools voor security principals</td>
+                                    <td>Domain</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Infrastructure Master</strong></td>
+                                    <td>Beheert cross-domain object references</td>
+                                    <td>Domain</td>
+                                </tr>
+                            </table>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.4: FSMO Roles Beheren</strong>
+                            <div class="command-box">
+                                <pre># Bekijk huidige FSMO rol houders
+Get-ADDomain | Select-Object InfrastructureMaster, PDCEmulator, RIDMaster
+Get-ADForest | Select-Object SchemaMaster, DomainNamingMaster
+
+# Verplaats FSMO rollen (indien nodig)
+Move-ADDirectoryServerOperationMasterRole -Identity "LAB-DC01" -OperationMasterRole 0,1,2,3,4 -Confirm:$false
+
+# Of individueel:
+# Schema Master (0)
+# Domain Naming Master (1)
+# PDC Emulator (2)
+# RID Master (3)
+# Infrastructure Master (4)</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Gebruik deze cmdlets om FSMO rollen te verplaatsen naar andere domain controllers.</p>
+                        </li>
+                    </ul>
+
+                    <h3>📡 DHCP Server</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.5: Installeer DHCP Role</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name DHCP -IncludeManagementTools</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.6: Authorize DHCP Server</strong>
+                            <div class="command-box">
+                                <pre>Add-DhcpServerInDC -DnsName "LAB-DC01.lab.local" -IPAddress 10.0.0.1</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Autoriseer de DHCP server in Active Directory voor beveiliging.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.7: Configureer DHCP Scope</strong>
+                            <div class="command-box">
+                                <pre>Add-DhcpServerv4Scope -Name "LabScope" -StartRange 10.0.0.100 -EndRange 10.0.0.200 -SubnetMask 255.255.255.0 -LeaseDuration 8.00:00:00</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Maak een DHCP scope aan voor IP-adres distributie.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 5.8: DHCP Security Settings</strong>
+                            <p>Configureer DHCP beveiligingsopties:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>🔐 Schakel conflict detection in</li>
+                                <li>📝 Configureer audit logging</li>
+                                <li>🛡️ Stel MAC address filtering in indien nodig</li>
+                            </ul>
+                            <div class="command-box">
+                                <pre>Set-DhcpServerv4OptionValue -ScopeId 10.0.0.0 -Router 10.0.0.1 -DnsServer 10.0.0.1</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sectie 6: Security en Firewall -->
+            <div class="section" id="section-6">
+                <div class="section-header" onclick="toggleSection(6)">
+                    <h2><span class="section-number">6</span> Security en Firewall</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Configureer beveiligingsinstellingen en firewall regels voor je Hyper-V lab omgeving.
+                        </div>
+                    </div>
+                    <h3>🔐 Basis Security Configuratie</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 6.1: Windows Firewall Configureren</strong>
+                            <div class="command-box">
+                                <pre>Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled True</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Schakel Windows Firewall in voor alle profielen.</p>
+                        </li>
+                        
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 6.2: Configureer Specifieke Firewall Rules</strong>
+                            <div class="command-box">
+                                <pre># RDP toestaan
+New-NetFirewallRule -DisplayName "Allow RDP" -Direction Inbound -Protocol TCP -LocalPort 3389 -Action Allow
+
+# ICMP (Ping) toestaan
+New-NetFirewallRule -DisplayName "Allow ICMP" -Direction Inbound -Protocol ICMPv4 -Action Allow
+
+# HTTP toestaan
+New-NetFirewallRule -DisplayName "Allow HTTP" -Direction Inbound -Protocol TCP -LocalPort 80 -Action Allow
+
+# HTTPS toestaan
+New-NetFirewallRule -DisplayName "Allow HTTPS" -Direction Inbound -Protocol TCP -LocalPort 443 -Action Allow</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Configureer essentiële firewall regels voor server communicatie.</p>
+                        </li>
+                        
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 6.3: Beveiligingsbeleid Implementeren</strong>
+                            <p>Implementeer basis beveiligingsbeleid:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>🛡️ Schakel onnodige services uit</li>
+                                <li>🔐 Stel sterke wachtwoorden in</li>
+                                <li>🔄 Zorg voor regelmatige updates</li>
+                                <li>📝 Activeer auditing en logging</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sectie 7: FSLogix Configuration -->
+            <div class="section" id="section-7">
+                <div class="section-header" onclick="toggleSection(7)">
+                    <h2><span class="section-number">7</span> FSLogix Configuration</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Configureer FSLogix voor gebruikersprofielbeheer in RDS omgevingen.
+                        </div>
+                    </div>
+                    <h3>📁 FSLogix Setup</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 7.1: Download en Installeer FSLogix</strong>
+                            <p>Download FSLogix van Microsoft en installeer op RDS servers:</p>
+                            <ol style="margin-left: 20px; margin-top: 10px;">
+                                <li>Download FSLogixMSIXBundle.x64.zip van Microsoft</li>
+                                <li>Extract het zip bestand</li>
+                                <li>Dubbelklik op FSLogixAppsSetup.exe om de installatie te starten</li>
+                                <li>Volg de installatiewizard en klik op Install</li>
+                            </ol>
+                        </li>
+                        
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 7.2: Configureer Profile Containers</strong>
+                            <p>Configureer FSLogix Profile Containers via het register:</p>
+                            <div class="command-box">
+                                <pre># Maak register sleutel aan
+New-Item -Path "HKLM:\SOFTWARE\FSLogix\Profiles" -Force
+
+# Configureer basis instellingen
+Set-ItemProperty -Path "HKLM:\SOFTWARE\FSLogix\Profiles" -Name "Enabled" -Value 1
+Set-ItemProperty -Path "HKLM:\SOFTWARE\FSLogix\Profiles" -Name "VHDLocations" -Value "\\LAB-DC01\FSLogixProfiles"
+Set-ItemProperty -Path "HKLM:\SOFTWARE\FSLogix\Profiles" -Name "SizeInMBs" -Value 30720
+Set-ItemProperty -Path "HKLM:\SOFTWARE\FSLogix\Profiles" -Name "IsDynamic" -Value 1
+Set-ItemProperty -Path "HKLM:\SOFTWARE\FSLogix\Profiles" -Name "FlipFlopProfileDirectoryName" -Value 1</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                        
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 7.3: Configureer Office 365 Container</strong>
+                            <p>Configureer Office 365 Container voor betere performance:</p>
+                            <div class="command-box">
+                                <pre># Maak register sleutel aan voor Office 365 Container
+New-Item -Path "HKLM:\SOFTWARE\FSLogix\ODFC" -Force
+
+# Configureer Office 365 Container instellingen
+Set-ItemProperty -Path "HKLM:\SOFTWARE\FSLogix\ODFC" -Name "Enabled" -Value 1
+Set-ItemProperty -Path "HKLM:\SOFTWARE\FSLogix\ODFC" -Name "VHDLocations" -Value "\\LAB-DC01\FSLogixODFC"
+Set-ItemProperty -Path "HKLM:\SOFTWARE\FSLogix\ODFC" -Name "SizeInMBs" -Value 5120</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+                    
+                    <div class="info-box">
+                        <span class="info-icon">💡</span>
+                        <div>
+                            <strong>Tip:</strong> Zorg voor voldoende schijfruimte op de file server voor FSLogix profielen. 
+                            Een gemiddelde gebruikersprofiel is 10-30GB.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 8: Troubleshooting -->
+            <div class="section" id="section-8">
+                <div class="section-header" onclick="toggleSection(8)">
+                    <h2><span class="section-number">8</span> Troubleshooting</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Leer algemene troubleshooting technieken voor Hyper-V en Windows Server omgevingen.
+                        </div>
+                    </div>
+                    <h3>🔧 Veelvoorkomende Problemen</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 8.1: Controleer VM Status</strong>
+                            <div class="command-box">
+                                <pre>Get-VM | Format-Table Name, State, Status, CPUUsage, MemoryAssigned</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Bekijk de status van alle virtuele machines.</p>
+                        </li>
+                        
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 8.2: Controleer Netwerkconnectiviteit</strong>
+                            <div class="command-box">
+                                <pre># Test netwerkconnectiviteit
+Test-NetConnection -ComputerName 10.0.0.1 -Port 53
+Test-NetConnection -ComputerName 10.0.0.1 -Port 389
+
+# Bekijk netwerk adapters
+Get-NetAdapter | Format-Table Name, InterfaceDescription, ifIndex, Status, LinkSpeed
+
+# Bekijk IP configuratie
+Get-NetIPConfiguration</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Controleer netwerkconnectiviteit en configuratie.</p>
+                        </li>
+                        
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 8.3: Controleer Event Logs</strong>
+                            <div class="command-box">
+                                <pre># Bekijk systeem logs
+Get-EventLog -LogName System -Newest 50 | Where-Object {$_.EntryType -eq "Error" -or $_.EntryType -eq "Warning"} | Format-Table TimeGenerated, EntryType, Source, Message -AutoSize
+
+# Bekijk applicatie logs
+Get-EventLog -LogName Application -Newest 50 | Where-Object {$_.EntryType -eq "Error" -or $_.EntryType -eq "Warning"} | Format-Table TimeGenerated, EntryType, Source, Message -AutoSize
+
+# Bekijk Hyper-V logs
+Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-Hyper-V-Compute-Operational'; Level=2} -MaxEvents 10</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Analyseer event logs voor fouten en waarschuwingen.</p>
+                        </li>
+                        
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 8.4: Controleer Systeemprestaties</strong>
+                            <div class="command-box">
+                                <pre># Bekijk CPU gebruik
+Get-Counter -Counter "\Processor(_Total)\% Processor Time" -SampleInterval 2 -MaxSamples 5
+
+# Bekijk geheugen gebruik
+Get-Counter -Counter "\Memory\Available MBytes" -SampleInterval 2 -MaxSamples 5
+
+# Bekijk schijfprestaties
+Get-Counter -Counter "\PhysicalDisk(_Total)\% Disk Time" -SampleInterval 2 -MaxSamples 5</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Monitor systeemprestaties voor bottlenecks.</p>
+                        </li>
+                    </ul>
+                    
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <div>
+                            <strong>Belangrijk:</strong> Maak regelmatig snapshots van VM's voor belangrijke configuraties. 
+                            Dit maakt rollback gemakkelijker bij problemen.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 9: Server Management I -->
+            <div class="section" id="section-9">
+                <div class="section-header" onclick="toggleSection(9)">
+                    <h2><span class="section-number">9</span> Server Management I</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Leer de basisprincipes van serverbeheer in Windows Server 2022, inclusief Server Manager, 
+                            rollen en features, en dagelijkse beheerstaken.
+                        </div>
+                    </div>
+
+                    <h3>🖥️ Server Manager Gebruik</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 9.1: Server Manager Openen</strong>
+                            <p>Server Manager is het centrale beheertool voor Windows Server.</p>
+                            <div class="command-box">
+                                <pre>servermanager</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Of klik op het Server Manager icoon op de taakbalk.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 9.2: Dashboard Overzicht</strong>
+                            <p>Bekijk het dashboard voor:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>⚠️ Waarschuwingen en fouten</li>
+                                <li>📊 Services status</li>
+                                <li>🔄 Best practices analyzer resultaten</li>
+                                <li>📈 Performance monitor</li>
+                            </ul>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 9.3: Lokale Server Beheren</strong>
+                            <p>Configureer lokale server instellingen:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>🌐 IP-adres en netwerkconfiguratie</li>
+                                <li>🔐 Firewall instellingen</li>
+                                <li>⚙️ Remote management</li>
+                                <li>🖥️ Computer naam en domeinlidmaatschap</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <h3>🔧 Rollen en Features Beheren</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 9.4: Rollen Toevoegen</strong>
+                            <div class="command-box">
+                                <pre>Add-WindowsFeature -Name Web-Server -IncludeManagementTools</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Voorbeeld: IIS Web Server rol toevoegen.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 9.5: Features Installeren</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name RSAT-AD-Tools</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Voorbeeld: Active Directory beheertools installeren.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 9.6: Rollen Verwijderen</strong>
+                            <div class="command-box">
+                                <pre>Uninstall-WindowsFeature -Name Web-Server</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Gebruik deze cmdlet om ongewenste rollen te verwijderen.</p>
+                        </li>
+                    </ul>
+
+                    <h3>🔄 Services en Taken</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 9.7: Services Beheren</strong>
+                            <div class="command-box">
+                                <pre>Get-Service | Where-Object {$_.Status -eq "Running"}</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Bekijk alle draaiende services.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 9.8: Windows Updates</strong>
+                            <div class="command-box">
+                                <pre># Controleer beschikbare updates
+Get-WindowsUpdate
+
+# Installeer alle beschikbare updates
+Install-WindowsUpdate -AcceptAll -AutoReboot</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Installeer alle beschikbare updates (vereist PSWindowsUpdate module).</p>
+                        </li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <div>
+                            <strong>Belangrijk:</strong> Controleer altijd de systeemvereisten voordat je nieuwe rollen of features installeert. 
+                            Sommige functies vereisen specifieke hardware of software dependencies.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 10: RDS (Remote Desktop Services) -->
+            <div class="section" id="section-10">
+                <div class="section-header" onclick="toggleSection(10)">
+                    <h2><span class="section-number">10</span> RDS (Remote Desktop Services)</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Configureer Remote Desktop Services voor veilige externe toegang tot virtuele desktops en applicaties.
+                        </div>
+                    </div>
+
+                    <h3>🖥️ RDS Componenten Overzicht</h3>
+                    <table style="margin-top: 10px;">
+                        <tr>
+                            <th>Component</th>
+                            <th>Functie</th>
+                            <th>Vereist</th>
+                        </tr>
+                        <tr>
+                            <td><strong>Connection Broker</strong></td>
+                            <td>Beheert RDS sessies en load balancing</td>
+                            <td>Ja</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Session Host</strong></td>
+                            <td>Host virtuele desktops en applicaties</td>
+                            <td>Ja</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Web Access</strong></td>
+                            <td>Web-based toegang tot RDS resources</td>
+                            <td>Optioneel</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gateway</strong></td>
+                            <td>Veilige externe toegang</td>
+                            <td>Voor extern</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Licensing</strong></td>
+                            <td>Beheert RDS client licenties</td>
+                            <td>Voor productie</td>
+                        </tr>
+                    </table>
+
+                    <h3>🔧 RDS Installatie en Configuratie</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 10.1: Installeer RDS Rollen</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name RDS-RD-Server -IncludeManagementTools
+Install-WindowsFeature -Name RDS-Connection-Broker -IncludeManagementTools
+Install-WindowsFeature -Name RDS-Web-Access -IncludeManagementTools</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Installeer de basis RDS componenten.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 10.2: Configureer Session Host</strong>
+                            <div class="command-box">
+                                <pre>Add-RDSessionHost -SessionHost "LAB-RDS01.lab.local" -ConnectionBroker "LAB-DC01.lab.local"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Voeg de session host toe aan de RDS deployment.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 10.3: Maak Session Collection</strong>
+                            <div class="command-box">
+                                <pre>New-RDSessionCollection -CollectionName "LabCollection" -SessionHost "LAB-RDS01.lab.local" -ConnectionBroker "LAB-DC01.lab.local"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Maak een nieuwe session collection voor gebruikers.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 10.4: Configureer RDS Licensing</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name RDS-Licensing -IncludeManagementTools
+Set-RDLicenseConfiguration -LicenseServer "LAB-DC01.lab.local" -Mode PerUser</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Stel RDS licensing in voor client toegang.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 10.5: Configureer Security Settings</strong>
+                            <p>Stel RDS beveiligingsbeleid in:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>🔐 NLA (Network Level Authentication) inschakelen</li>
+                                <li>🛡️ SSL/TLS certificaten configureren</li>
+                                <li>🔒 Session timeout policies instellen</li>
+                            </ul>
+                            <div class="command-box">
+                                <pre>Set-RDSessionCollectionConfiguration -CollectionName "LabCollection" -EnableUserProfileDisk $true -MaxRedirectedDeviceNumber 5</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <div>
+                            <strong>Belangrijk:</strong> Voor productieomgevingen is een aparte RDS licensing server vereist. 
+                            Test altijd de connectiviteit voordat je gebruikers toegang geeft.
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-icon">✅</span>
+                        <div>
+                            <strong>Verificatie:</strong> Gebruik Remote Desktop Connection om te testen of de RDS sessie correct werkt.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 11: File Services -->
+            <div class="section" id="section-11">
+                <div class="section-header" onclick="toggleSection(11)">
+                    <h2><span class="section-number">11</span> File Services</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Configureer file services voor gedeelde opslag, permissies en distributed file system.
+                        </div>
+                    </div>
+
+                    <h3>📁 File Server Rollen</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 11.1: Installeer File Server Role</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name FileAndStorage-Services, File-Services -IncludeManagementTools</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Installeer de File Server rol en management tools.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 11.2: Maak Shared Folder</strong>
+                            <div class="command-box">
+                                <pre>New-Item -Path "C:\Shares" -ItemType Directory
+New-SmbShare -Name "LabShare" -Path "C:\Shares\Lab" -FullAccess "LAB\Domain Admins" -ChangeAccess "LAB\Domain Users"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Maak een nieuwe gedeelde folder met SMB sharing.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 11.3: Configureer NTFS Permissions</strong>
+                            <div class="command-box">
+                                <pre>$acl = Get-Acl "C:\Shares\Lab"
+$accessRule = New-Object System.Security.AccessControl.FileSystemAccessRule("LAB\Domain Users","Modify","Allow")
+$acl.SetAccessRule($accessRule)
+$acl | Set-Acl "C:\Shares\Lab"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Stel NTFS permissies in voor gedetailleerde toegang controle.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 11.4: Configureer DFS Namespace</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name FS-DFS-Namespace, FS-DFS-Replication -IncludeManagementTools
+New-DfsReplicationGroup -GroupName "LabDFS" -DomainName "lab.local"
+New-DfsNamespace -Name "LabNamespace" -Path "\\lab.local\LabNamespace" -Type DomainV2</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Stel Distributed File System in voor centrale bestandstoegang.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 11.5: Configureer Quota's</strong>
+                            <div class="command-box">
+                                <pre>New-FsrmQuota -Path "C:\Shares\Lab" -Size 1GB -SoftLimit</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Stel opslag quota's in om diskruimte te beheren.</p>
+                        </li>
+                    </ul>
+
+                    <h3>🔐 Security Best Practices</h3>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>🔒 Gebruik altijd share permissies EN NTFS permissies</li>
+                        <li>📝 Schakel auditing in voor gevoelige shares</li>
+                        <li>🛡️ Configureer SMB signing voor versleutelde communicatie</li>
+                        <li>🔑 Gebruik DFS voor redundantie en load balancing</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <div>
+                            <strong>Veiligheid:</strong> Combineer altijd share permissies met NTFS permissies voor optimale beveiliging. 
+                            Het meest restrictieve niveau geldt.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 12: Server Management II -->
+            <div class="section" id="section-12">
+                <div class="section-header" onclick="toggleSection(12)">
+                    <h2><span class="section-number">12</span> Server Management II</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Leer geavanceerde serverbeheer technieken inclusief PowerShell remoting, monitoring en automatisering.
+                        </div>
+                    </div>
+
+                    <h3>⚡ PowerShell Remoting</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 12.1: Schakel PowerShell Remoting in</strong>
+                            <div class="command-box">
+                                <pre>Enable-PSRemoting -Force
+Set-Item WSMan:\localhost\Client\TrustedHosts -Value "*" -Force</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Schakel PowerShell remoting in voor remote beheer.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 12.2: Remote Commando Uitvoeren</strong>
+                            <div class="command-box">
+                                <pre>Invoke-Command -ComputerName "LAB-DC01" -ScriptBlock { Get-Service | Where-Object {$_.Status -eq "Running"} }</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Voer PowerShell commando's uit op remote servers.</p>
+                        </li>
+                    </ul>
+
+                    <h3>📅 Scheduled Tasks</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 12.3: Maak Scheduled Task</strong>
+                            <div class="command-box">
+                                <pre>$action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument "-Command Get-Process"
+$trigger = New-ScheduledTaskTrigger -Daily -At "09:00"
+Register-ScheduledTask -TaskName "DailyProcessCheck" -Action $action -Trigger $trigger -RunLevel Highest</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Maak automatische taken voor routine onderhoud.</p>
+                        </li>
+                    </ul>
+
+                    <h3>📊 Event Logs en Monitoring</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 12.4: Bekijk Event Logs</strong>
+                            <div class="command-box">
+                                <pre>Get-EventLog -LogName System -Newest 10 | Format-Table TimeGenerated, EntryType, Source, Message</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Analyseer systeem logs voor troubleshooting.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 12.5: Performance Monitoring</strong>
+                            <div class="command-box">
+                                <pre>Get-Counter -Counter "\Processor(_Total)\% Processor Time" -SampleInterval 5 -MaxSamples 10</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Monitor systeem prestaties in real-time.</p>
+                        </li>
+                    </ul>
+
+                    <h3>🔧 Advanced Configuration</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 12.6: Configureer Windows Firewall Advanced</strong>
+                            <div class="command-box">
+                                <pre>New-NetFirewallRule -DisplayName "Allow ICMP" -Direction Inbound -Protocol ICMPv4 -Action Allow</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Geavanceerde firewall configuratie voor specifieke behoeften.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 12.7: Storage Spaces Direct Setup</strong>
+                            <div class="command-box">
+                                <pre>Enable-ClusterStorageSpacesDirect -PoolFriendlyName "LabStoragePool"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Configureer software-defined storage voor hoge beschikbaarheid.</p>
+                        </li>
+                    </ul>
+
+                    <div class="info-box">
+                        <span class="info-icon">✅</span>
+                        <div>
+                            <strong>Best Practice:</strong> Gebruik altijd PowerShell voor geautomatiseerd beheer en documenteer je scripts voor herhaalbaarheid.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 13: RRAS - Remote Connections -->
+            <div class="section" id="section-13">
+                <div class="section-header" onclick="toggleSection(13)">
+                    <h2><span class="section-number">13</span> RRAS - Remote Connections</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Configureer Routing and Remote Access Service voor VPN connecties, routing en remote toegang.
+                        </div>
+                    </div>
+
+                    <h3>🌐 RRAS Componenten</h3>
+                    <table style="margin-top: 10px;">
+                        <tr>
+                            <th>Service</th>
+                            <th>Beschrijving</th>
+                            <th>Gebruik</th>
+                        </tr>
+                        <tr>
+                            <td><strong>VPN</strong></td>
+                            <td>Virtual Private Network</td>
+                            <td>Veilige remote toegang</td>
+                        </tr>
+                        <tr>
+                            <td><strong>NAT</strong></td>
+                            <td>Network Address Translation</td>
+                            <td>Internet delen</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Routing</strong></td>
+                            <td>IP Routing</td>
+                            <td>Netwerk routing</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dial-up</strong></td>
+                            <td>Inbel verbindingen</td>
+                            <td>Legacy ondersteuning</td>
+                        </tr>
+                    </table>
+
+                    <h3>🔧 RRAS Installatie en Configuratie</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 13.1: Installeer RRAS Role</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name Routing -IncludeManagementTools</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Installeer de Routing rol voor RRAS functionaliteit.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 13.2: Configureer NAT</strong>
+                            <div class="command-box">
+                                <pre>Install-RemoteAccess -VpnType Vpn</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Stel NAT in voor internet toegang vanuit interne netwerk.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 13.3: Configureer VPN Server</strong>
+                            <div class="command-box">
+                                <pre>Add-VpnServerAddress -ServerAddress "LAB-RRAS01.lab.local" -InternalInterface "Ethernet" -ExternalInterface "Internet"
+Set-VpnServerConfiguration -TunnelType Sstp</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Configureer VPN server voor remote client toegang.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 13.4: Configureer Routing</strong>
+                            <div class="command-box">
+                                <pre>New-NetRoute -DestinationPrefix "192.168.0.0/24" -InterfaceIndex 12 -NextHop 10.0.0.1</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Voeg statische routes toe voor netwerk routing.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 13.5: Configureer Firewall voor VPN</strong>
+                            <div class="command-box">
+                                <pre>New-NetFirewallRule -DisplayName "Allow VPN" -Direction Inbound -Protocol TCP -LocalPort 1723 -Action Allow
+New-NetFirewallRule -DisplayName "Allow PPTP GRE" -Direction Inbound -Protocol 47 -Action Allow</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Open firewall poorten voor VPN verkeer.</p>
+                        </li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <div>
+                            <strong>Beveiliging:</strong> Gebruik altijd sterke authenticatie en versleuteling voor VPN connecties. 
+                            Overweeg SSTP of IKEv2 voor betere beveiliging dan PPTP.
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-icon">✅</span>
+                        <div>
+                            <strong>Test:</strong> Gebruik Windows VPN client om de connectie te testen vanaf een remote locatie.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 14: Direct Access -->
+            <div class="section" id="section-14">
+                <div class="section-header" onclick="toggleSection(14)">
+                    <h2><span class="section-number">14</span> Direct Access</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Configureer Direct Access voor altijd-aan VPN connectiviteit zonder gebruikersinteractie.
+                        </div>
+                    </div>
+
+                    <h3>🔗 Direct Access Overzicht</h3>
+                    <p>Direct Access gebruikt IPv6-over-IPv4 tunneling om altijd verbonden te blijven met het bedrijfsnetwerk.</p>
+
+                    <h3>🔧 Direct Access Installatie</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 14.1: Installeer Direct Access Role</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name DirectAccess-VPN -IncludeManagementTools</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Installeer Direct Access componenten.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 14.2: Configureer Network Location Server</strong>
+                            <div class="command-box">
+                                <pre>New-WebVirtualDirectory -Site "Default Web Site" -Name "DirectAccess" -PhysicalPath "C:\inetpub\wwwroot\DirectAccess"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Stel Network Location Server in voor connectiviteitsdetectie.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 14.3: Configureer IPsec Certificates</strong>
+                            <div class="command-box">
+                                <pre># Genereer certificaat voor Direct Access
+$cert = New-SelfSignedCertificate -DnsName "directaccess.lab.local" -CertStoreLocation "cert:\LocalMachine\My"
+Set-DnsServerResourceRecord -ZoneName "lab.local" -Name "directaccess" -IPv4Address "10.0.0.1" -ARecord</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Configureer certificaten voor IPsec versleuteling.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 14.4: Configureer Direct Access Group Policy</strong>
+                            <div class="command-box">
+                                <pre>New-GPO -Name "Direct Access Policy" | New-GPLink -Target "OU=Computers,DC=lab,DC=local"
+Set-GPRegistryValue -Name "Direct Access Policy" -Key "HKLM\SOFTWARE\Policies\Microsoft\Windows\DirectAccess" -ValueName "EnableDirectAccess" -Type DWord -Value 1</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Maak Group Policy voor Direct Access configuratie.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 14.5: Configureer Name Resolution Policy</strong>
+                            <div class="command-box">
+                                <pre>Add-DnsServerQueryResolutionPolicy -Name "DirectAccessNRPT" -Action ALLOW -Fqdn "lab.local" -ServerInterfaceIP "10.0.0.1"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Stel Name Resolution Policy Table in voor DNS resoluties.</p>
+                        </li>
+                    </ul>
+
+                    <h3>🔐 Security Features</h3>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>🛡️ IPsec versleuteling voor alle verkeer</li>
+IPv4 tunneling</li>
+                        <li>📡 Automatische connectie bij internet toegang</li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <div>
+                            <strong>Vereisten:</strong> Direct Access vereist IPv6 ondersteuning, PKI certificaten en Network Location Server. 
+                            Het is complexer dan traditionele VPN.
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-icon">✅</span>
+                        <div>
+                            <strong>Voordeel:</strong> Gebruikers ervaren altijd-aan connectiviteit zonder handmatige VPN connecties.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sectie 15: Network Policy Server (NPS) -->
+            <div class="section" id="section-15">
+                <div class="section-header" onclick="toggleSection(15)">
+                    <h2><span class="section-number">15</span> Network Policy Server (NPS)</h2>
+                </div>
+                <div class="section-content">
+                    <div class="info-box">
+                        <span class="info-icon">ℹ️</span>
+                        <div>
+                            <strong>Doel:</strong> Configureer Network Policy Server voor netwerktoegangsbeheer en RADIUS-functionaliteit.
+                        </div>
+                    </div>
+
+                    <h3>📡 NPS Overzicht</h3>
+                    <p>Network Policy Server (NPS) is Microsofts oplossing voor netwerktoegangsbeheer die fungeert als een RADIUS-server en -client voor het afdwingen van netwerkbeleid.</p>
+
+                    <h3>🔐 Functies van NPS</h3>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>🔐 Centrale authenticatie en autorisatie</li>
+                        <li>📋 Netwerkbeleid afdwingen</li>
+                        <li>📡 RADIUS-server functionaliteit</li>
+                        <li>👥 VLAN-toewijzing en toegangsbeheer</li>
+                        <li>📊 Accounting en auditing</li>
+                    </ul>
+
+                    <h3>🔧 NPS Installatie</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.1: Installeer NPS Role</strong>
+                            <div class="command-box">
+                                <pre>Install-WindowsFeature -Name NPAS -IncludeManagementTools</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Installeer Network Policy and Access Services.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.2: Controleer Installatie</strong>
+                            <div class="command-box">
+                                <pre>Get-WindowsFeature -Name NPAS</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Controleer of NPS-service is geïnstalleerd.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.3: Controleer Service Status</strong>
+                            <div class="command-box">
+                                <pre>Get-Service -Name IAS</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Controleer of NPS-service draait.</p>
+                        </li>
+                    </ul>
+
+                    <h3>📡 RADIUS-clients configureren</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.4: Open NPS Console</strong>
+                            <p>Open Server Manager > Tools > Network Policy Server.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.5: Voeg RADIUS-client toe</strong>
+                            <div class="command-box">
+                                <pre># In NPS-console, klik met rechtermuisknop op "RADIUS Clients and Servers"
+# Selecteer "New RADIUS Client"
+# Voer naam in: "WiFi-AP-01"
+# Voer IP-adres in: "10.0.0.100"
+# Configureer gedeeld geheim: "MySharedSecret123"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Voeg een RADIUS-client toe (bijv. WiFi access point).</p>
+                        </li>
+                    </ul>
+
+                    <h3>📋 Netwerkbeleid Configureren</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.6: Maak Nieuw Netwerkbeleid</strong>
+                            <p>In NPS-console:</p>
+                            <ol style="margin-left: 20px; margin-top: 10px;">
+                                <li>Klik met rechtermuisknop op "Policies"</li>
+                                <li>Selecteer "Network Policies"</li>
+                                <li>Klik op "New"</li>
+                            </ol>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.7: Configureer Beleid</strong>
+                            <div class="command-box">
+                                <pre># Voer naam in: "WiFi-Users"
+# Selecteer gebruikersgroepen: "Domain Users"
+# Configureer voorwaarden: Tijdsbeperkingen, locatie, etc.
+# Stel verwerkingvolgorde in
+# Configureer beperkingen: Toegang toestaan
+# Configureer RADIUS-kenmerken: VLAN, QoS, etc.</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Configureer netwerkbeleid voor gebruikersgroepen.</p>
+                        </li>
+                    </ul>
+
+                    <h3>📊 Monitoring en Logging</h3>
+                    <ul class="steps-list">
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.8: Configureer Logging</strong>
+                            <div class="command-box">
+                                <pre># In NPS-console, klik met rechtermuisknop op "NPS (Local)"
+# Selecteer "Properties"
+# Ga naar tabblad "Logging"
+# Selecteer logbestanden: Accounting, Authentication, etc.
+# Stel logbestandsgrootte in: 100 MB</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Configureer logging voor auditing en troubleshooting.</p>
+                        </li>
+
+                        <li class="step-item">
+                            <input type="checkbox" onchange="updateProgress()">
+                            <strong>Stap 15.9: Bekijk Logbestanden</strong>
+                            <div class="command-box">
+                                <pre>Get-ChildItem -Path "$env:SystemRoot\System32\LogFiles\INETSVC" -Filter "*.log"</pre>
+                                <button class="copy-btn" onclick="copyCommand(this)">📋 Kopieer</button>
+                            </div>
+                            <p>Bekijk NPS logbestanden voor analyse.</p>
+                        </li>
+                    </ul>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <div>
+                            <strong>Beveiliging:</strong> Gebruik sterke gedeelde geheimen voor RADIUS-clients en implementeer IPsec voor extra beveiliging.
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <span class="info-icon">✅</span>
+                        <div>
+                            <strong>Best Practice:</strong> Test altijd NPS-configuratie met een testclient voordat je productie-implementatie uitvoert.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Section toggling functionality
+        function toggleSection(sectionNumber) {
+            const section = document.getElementById(`section-${sectionNumber}`);
+            section.classList.toggle('active');
+        }
+
+        // Copy command functionality
+        function copyCommand(button) {
+            const commandBox = button.parentElement;
+            const commandText = commandBox.querySelector('pre') ? commandBox.querySelector('pre').textContent : commandBox.textContent.replace('📋 Kopieer', '').trim();
+
+            navigator.clipboard.writeText(commandText).then(() => {
+                button.textContent = '✅ Gekopieerd';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = '📋 Kopieer';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Progress tracking
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            const checked = document.querySelectorAll('input[type="checkbox"]:checked');
+            const progress = checkboxes.length > 0 ? (checked.length / checkboxes.length) * 100 : 0;
+
+            const progressBar = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            if (progressBar) {
+                // Update the width of the progress bar
+                progressBar.style.width = progress + '%';
+            }
+            
+            if (progressText) {
+                // Update the text content
+                progressText.textContent = Math.round(progress) + '% Voltooid';
+            }
+
+            // Mark completed steps
+            checked.forEach(checkbox => {
+                checkbox.closest('.step-item').classList.add('completed');
+            });
+
+            // Remove completed class from unchecked
+            const unchecked = document.querySelectorAll('input[type="checkbox"]:not(:checked)');
+            unchecked.forEach(checkbox => {
+                checkbox.closest('.step-item').classList.remove('completed');
+            });
+        }
+
+        // Initialize progress on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Small delay to ensure all elements are loaded
+            setTimeout(updateProgress, 100);
+        });
+    </script>
+    
+    <!-- Copyright Notice -->
+    <footer style="text-align: center; padding: 20px; margin-top: auto; border-top: 1px solid #e0e0e0; color: #666; font-size: 0.9em; background: white;">
+        <p>&copy; 2025 Maes Jens. Alle rechten voorbehouden.</p>
+    </footer>
+</body>
+</html>
